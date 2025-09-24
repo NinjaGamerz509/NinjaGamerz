@@ -17,8 +17,8 @@ body {
 header {
   display:flex;
   justify-content:space-between;
-  align-items:center;
-  padding:20px;
+  align-items:flex-start; /* Align items top */
+  padding:15px 20px;
   background:#111;
   position:sticky;
   top:0;
@@ -50,7 +50,7 @@ header {
 header h1 {
   margin:0;
   position:fixed;
-  top:20px;
+  top:20px; /* Thoda upar */
   right:20px;
 }
 
@@ -176,6 +176,10 @@ html{scroll-behavior:smooth;}
   <div class="showcase">
     <div class="card">COMING SOON ✨</div>
   </div>
+  <!-- Admin upload button -->
+  <div id="adminUpload" style="margin-top:20px; display:none;">
+    <button class="btn">Upload Photo/Video</button>
+  </div>
 </section>
 
 <section id="platforms">
@@ -208,13 +212,19 @@ navToggle.addEventListener('click', ()=>{
     dropdownMenu.style.display='flex';
   }
 });
-  
+
 // Dropdown links scroll + auto-close
 dropdownMenu.querySelectorAll('a').forEach(link=>{
   link.addEventListener('click', ()=>{
     dropdownMenu.style.display='none';
   });
 });
+
+// Admin check
+const isAdmin = true; // change to false for non-admin
+if(isAdmin){
+  document.getElementById('adminUpload').style.display='block';
+}
 </script>
 
 </body>
