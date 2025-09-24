@@ -17,8 +17,8 @@ body {
 header {
   display:flex;
   justify-content:space-between;
-  align-items:flex-start; /* Align items top */
-  padding:15px 20px;
+  align-items:flex-start;
+  padding:10px 20px;
   background:#111;
   position:sticky;
   top:0;
@@ -46,12 +46,17 @@ header {
   transition:0.3s;
 }
 
-/* Name on right */
+/* Name on right with bigger background */
 header h1 {
   margin:0;
   position:fixed;
-  top:20px; /* Thoda upar */
+  top:10px;
   right:20px;
+  padding:15px 25px;
+  background:#222;
+  border-radius:10px;
+  box-shadow:0 3px 6px rgba(0,0,0,0.5);
+  font-size:1.3rem;
 }
 
 /* Dropdown Panel */
@@ -72,9 +77,7 @@ header h1 {
   margin:5px 0;
   font-weight:bold;
 }
-#dropdownMenu a:hover {
-  color:#a020f0;
-}
+#dropdownMenu a:hover { color:#a020f0; }
 
 /* Buttons */
 .btn {
@@ -119,10 +122,7 @@ h2 {
   padding:20px;
   border-radius:10px;
 }
-.card:hover {
-  background:#2a2a2a;
-  transition:0.3s;
-}
+.card:hover { background:#2a2a2a; transition:0.3s; }
 
 /* Footer */
 footer {
@@ -132,6 +132,18 @@ footer {
   text-align:center;
 }
 html{scroll-behavior:smooth;}
+
+/* Upload Form Styling */
+#adminUpload input, #adminUpload button {
+  margin:5px 0;
+  padding:10px;
+  border-radius:6px;
+  border:none;
+}
+#adminUpload input[type="file"] { background:#333; color:white; }
+#adminUpload input[type="text"] { width:80%; }
+#adminUpload button { background:#a020f0; color:white; cursor:pointer; }
+#adminUpload button:hover { background:#7a0fc4; }
 </style>
 </head>
 <body>
@@ -173,12 +185,15 @@ html{scroll-behavior:smooth;}
 
 <section id="showcaseMain">
   <h2>Showcase</h2>
-  <div class="showcase">
+  <div class="showcase" id="showcaseContent">
     <div class="card">COMING SOON ✨</div>
   </div>
-  <!-- Admin upload button -->
+
+  <!-- Admin upload form -->
   <div id="adminUpload" style="margin-top:20px; display:none;">
-    <button class="btn">Upload Photo/Video</button>
+    <input type="file" id="fileInput" accept="image/*,video/*"><br>
+    <input type="text" id="fileTitle" placeholder="Enter title"><br>
+    <button onclick="uploadMedia()">Upload</button>
   </div>
 </section>
 
@@ -224,6 +239,30 @@ dropdownMenu.querySelectorAll('a').forEach(link=>{
 const isAdmin = true; // change to false for non-admin
 if(isAdmin){
   document.getElementById('adminUpload').style.display='block';
+}
+
+// Upload function (demo)
+function uploadMedia(){
+  const fileInput = document.getElementById('fileInput');
+  const title = document.getElementById('fileTitle').value;
+  if(fileInput.files.length === 0 || title===''){
+    alert('Please select file and enter title');
+    return;
+  }
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const newCard = document.createElement('div');
+    newCard.className = 'card';
+    if(file.type.startsWith('image')){
+      newCard.innerHTML = `<strong>${title}</strong><br><img src="${e.target.result}" style="max-width:100%; margin-top:5px;">`;
+    } else if(file.type.startsWith('video')){
+      newCard.innerHTML = `<strong>${title}</strong><br><video controls style="max-width:100%; margin-top:5px;"><source src="${e.target.result}" type="${file.type}"></video>`;
+    }
+    document.getElementById('showcaseContent').appendChild(newCard);
+    fileInput.value=''; document.getElementById('fileTitle').value='';
+  };
+  reader.readAsDataURL(file);
 }
 </script>
 
