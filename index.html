@@ -143,10 +143,10 @@ loginBtn.addEventListener('click',()=>{
     isAdmin=true;
     adminControlsDiv.style.display='flex';
     document.getElementById('adminLoginDiv').style.display='none';
+    GHTOKEN=prompt("Enter your GitHub Personal Access Token (repo write access)"); 
+    if(!GHTOKEN){ alert("Token required"); isAdmin=false; adminControlsDiv.style.display='none'; document.getElementById('adminLoginDiv').style.display='flex'; return;}
     alert('Admin logged in ✔');
-  } else {
-    alert('Wrong password');
-  }
+  } else { alert('Wrong password'); }
 });
 
 logoutBtn.addEventListener('click',()=>{
@@ -176,8 +176,33 @@ fileInput.addEventListener('change',()=>{
   });
 });
 
-// Here you can integrate GitHub upload functions as shown in previous version
-// Use GHTOKEN + REPO info to push files and update media.json
+// Helper: file to base64
+function fileToBase64(file){return new Promise((res,rej)=>{const reader=new FileReader();reader.onload=()=>res(reader.result.split(',')[1]);reader.onerror=rej;reader.readAsDataURL(file);});}
+
+// Upload button
+uploadBtn.addEventListener('click',async()=>{
+  if(!isAdmin){ alert("Admin not logged in"); return;}
+  const files=Array.from(fileInput.files);
+  if(files.length===0){ alert("Select files first"); return;}
+  for(let i=0;i<files.length;i++){
+    const file=files[i];
+    const title=titleInput.value.trim()||file.name;
+    try{
+      const content=await fileToBase64(file);
+      const fileName=title.replace(/\s+/g,'_')+'_'+file.name;
+      const path=`${MEDIA_PATH}/${fileName}`;
+      // Upload to GitHub
+      const res=await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`,{
+        method:'PUT',
+        headers:{'Authorization':'token '+GHTOKEN,'Content-Type':'application/json'},
+        body:JSON.stringify({message:'Add media '+fileName,content:content})
+      });
+      if(!res.ok){ throw new Error('Upload failed: '+res.statusText);}
+      alert(fileName+' uploaded successfully');
+      // You can add here fetch/update media.json as needed
+    } catch(e){ console.error(e); alert('Error: '+e.message);}
+  }
+});
 </script>
 </body>
 </html>
