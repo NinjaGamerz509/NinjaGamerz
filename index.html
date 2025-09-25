@@ -4,10 +4,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <title>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</title>
 <style>
+/* ===== Body & general ===== */
 body {
   margin:0;
   font-family:Arial,sans-serif;
-  background:#000;
+  background:#0c0c0c url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?fit=crop&w=1920&q=80') no-repeat center center fixed;
+  background-size:cover;
   color:#1E90FF;
   overflow-x:hidden;
 }
@@ -68,7 +70,7 @@ section {
   opacity:0;
   transform:translateY(50px) rotateX(10deg);
   transition:all .8s ease-out;
-  background:rgba(0,0,0,0.45);
+  background:rgba(20,20,20,0.85);
   margin:20px auto;
   border-radius:15px;
   max-width:95vw;
@@ -139,13 +141,43 @@ const dropdownMenu = document.getElementById('dropdownMenu');
 navToggle.addEventListener('click', ()=> {
   navToggle.classList.toggle('open');
   dropdownMenu.style.display = dropdownMenu.style.display === 'flex' ? 'none' : 'flex';
-});dropdownMenu.querySelectorAll('a').forEach(a => { a.addEventListener('click', e => { e.preventDefault(); const targetId = a.getAttribute('href').substring(1); const targetEl = document.getElementById(targetId); if(targetEl){ targetEl.scrollIntoView({behavior:'smooth', block:'start'}); dropdownMenu.style.display = 'none'; } }); });
-
-const sections = document.querySelectorAll("section"); const observer = new IntersectionObserver(entries => { entries.forEach(entry => { if(entry.isIntersecting){ entry.target.classList.add('show'); const cards = entry.target.querySelectorAll('.card'); cards.forEach((card,i)=>{card.style.transitionDelay = ${i*0.1}s;}); } }); },{threshold:0.2}); sections.forEach(section => observer.observe(section));
-
-window.addEventListener('scroll', ()=>{ const scrollTop = window.scrollY; const docHeight = document.body.scrollHeight - window.innerHeight; const scrollPercent = (scrollTop/docHeight)*100; document.getElementById('scrollProgress').style.width = scrollPercent + '%'; });
-
-for(let i=0;i<25;i++){ const particle = document.createElement('div'); particle.classList.add('particle'); particle.style.left = Math.random()*100 + 'vw'; particle.style.animationDuration = (5+Math.random()*5)+'s'; particle.style.width = particle.style.height = (10+Math.random()*15)+'px'; document.body.appendChild(particle); } </script>
-
+});
+dropdownMenu.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const targetId = a.getAttribute('href').substring(1);
+    const targetEl = document.getElementById(targetId);
+    if(targetEl){
+      targetEl.scrollIntoView({behavior:'smooth', block:'start'});
+      dropdownMenu.style.display = 'none';
+    }
+  });
+});
+const sections = document.querySelectorAll("section");
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('show');
+      const cards = entry.target.querySelectorAll('.card');
+      cards.forEach((card,i)=>{card.style.transitionDelay = `${i*0.1}s`;});
+    }
+  });
+},{threshold:0.2});
+sections.forEach(section => observer.observe(section));
+window.addEventListener('scroll', ()=>{
+  const scrollTop = window.scrollY;
+  const docHeight = document.body.scrollHeight - window.innerHeight;
+  const scrollPercent = (scrollTop/docHeight)*100;
+  document.getElementById('scrollProgress').style.width = scrollPercent + '%';
+});
+for(let i=0;i<25;i++){
+  const particle = document.createElement('div');
+  particle.classList.add('particle');
+  particle.style.left = Math.random()*100 + 'vw';
+  particle.style.animationDuration = (5+Math.random()*5)+'s';
+  particle.style.width = particle.style.height = (10+Math.random()*15)+'px';
+  document.body.appendChild(particle);
+}
+</script>
 </body>
 </html>
