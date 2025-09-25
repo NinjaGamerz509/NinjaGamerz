@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</title>
 <style>
-  body{margin:0;font-family:Arial, sans-serif;background:#0c0c0c;color:#fff;overflow-x:hidden;}
-  header{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 20px;background:#111;position:sticky;top:0;z-index:10;}
+  body{margin:0;font-family:Arial, sans-serif;background:#0c0c0c;color:#fff;overflow-x:hidden}
+  header{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 20px;background:#111;position:sticky;top:0;z-index:10}
   .nav-toggle{cursor:pointer;width:30px;height:25px;display:flex;flex-direction:column;justify-content:space-between;position:fixed;top:20px;left:20px;z-index:25}
   .nav-toggle span{display:block;height:3px;background:#fff;border-radius:2px;transition:0.3s}
   header h1{margin:0;position:fixed;top:10px;right:20px;padding:15px 25px;background:#222;border-radius:10px;box-shadow:0 3px 6px rgba(0,0,0,.5);font-size:1.3rem}
   #dropdownMenu{position:fixed;top:60px;left:20px;background:#1c1c1c;padding:10px 20px;border-radius:8px;display:none;flex-direction:column;z-index:20}
-  #dropdownMenu a{color:#fff;text-decoration:none;margin:5px 0;font-weight:bold}
+  #dropdownMenu a{color:#fff;text-decoration:none;margin:5px 0;font-weight:700}
   #dropdownMenu a:hover{color:#a020f0}
   .btn{display:inline-block;margin:10px 5px;padding:12px 20px;border-radius:8px;background:#a020f0;color:#fff;font-weight:700;text-decoration:none;cursor:pointer}
   .btn:hover{background:#7a0fc4}
@@ -24,14 +24,14 @@
   footer{padding:20px;background:#111;margin-top:30px;text-align:center}
   html{scroll-behavior:smooth}
 
-  /* admin form + preview */
+  /* admin + preview styles */
   #adminBar{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:10px;flex-wrap:wrap}
   #adminBar input[type="password"], #adminBar input[type="text"], #adminUpload input[type="text"]{padding:8px;border-radius:6px;border:none}
   #adminUpload{margin-top:20px;display:none;text-align:center}
   #previewContainer{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;justify-content:center}
   .previewCard{background:#2a2a2a;padding:10px;border-radius:8px;width:150px;text-align:center}
   .previewCard img,.previewCard video{max-width:100%;border-radius:5px}
-  .previewCard input{width:90%;margin-top:6px;padding:6px;border-radius:5px;border:none}
+  .previewCard input{width:90%;margin-top:6px;padding:6px;border-radius:6px;border:none}
 
   .adminControls{display:flex;gap:6px;margin-top:8px;justify-content:center}
   .adminControls button{padding:6px 8px;border-radius:6px;border:none;cursor:pointer}
@@ -80,28 +80,25 @@
 <section id="showcaseMain">
   <h2>Showcase</h2>
 
-  <!-- showcase area -->
   <div class="showcase" id="showcaseContent">
     <div class="card" id="comingSoon">COMING SOON ✨</div>
   </div>
 
-  <!-- admin quick bar (unlock admin) -->
+  <!-- admin quick bar -->
   <div id="adminBar">
-    <!-- shows if not unlocked -->
     <div id="adminLockPrompt">
       <input id="adminKeyInput" type="password" placeholder="Enter admin key" />
       <button id="unlockBtn" class="btn">Unlock Admin</button>
-      <small style="color:#aaa;display:block;width:100%;text-align:center">(Admin email: <strong>srahemat943@gmail.com</strong>)</small>
+      <!-- removed admin email text as requested -->
     </div>
 
-    <!-- shows when unlocked -->
     <div id="adminInfo" style="display:none;align-items:center;gap:10px;">
-      <span style="color:#a0ffa0">Admin unlocked: <strong>srahemat943@gmail.com</strong></span>
+      <span style="color:#a0ffa0">Admin unlocked</span>
       <button id="logoutBtn" class="logoutBtn">Logout Admin</button>
     </div>
   </div>
 
-  <!-- admin upload area (visible only when unlocked) -->
+  <!-- admin upload area -->
   <div id="adminUpload">
     <div style="margin-bottom:8px">
       <input type="file" id="fileInput" accept="image/*,video/*" multiple />
@@ -126,30 +123,17 @@
 </footer>
 
 <script>
-/*
-  Simple password-based admin unlock:
-  - Set ADMIN_PASSWORD below to whatever secret you want.
-  - Only users who enter the key can upload/edit/delete.
-  - Admin session persists in localStorage until logout.
-  - Admin "identity" is labelled as srahemat943@gmail.com (as requested).
-*/
+/* Config */
+const ADMIN_PASSWORD = "Ninja786"; // <- updated as requested
+const LS_ADMIN_SESSION = "ng_admin_unlocked_v1";
+const LS_MEDIA = "ng_showcase_media_v1";
 
-const ADMIN_PASSWORD = "ninjaAdmin2025"; // <-- change this to your own secret
-const ADMIN_EMAIL_LABEL = "srahemat943@gmail.com";
-
+/* UI refs */
 const navToggle = document.getElementById('navToggle');
 const dropdownMenu = document.getElementById('dropdownMenu');
 navToggle.addEventListener('click', ()=> dropdownMenu.style.display = dropdownMenu.style.display === 'flex' ? 'none' : 'flex');
 dropdownMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', ()=> dropdownMenu.style.display='none'));
 
-// animation observer
-const sections = document.querySelectorAll("section");
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('show'); });
-}, {threshold:0.1});
-sections.forEach(s => observer.observe(s));
-
-// DOM refs
 const adminKeyInput = document.getElementById('adminKeyInput');
 const unlockBtn = document.getElementById('unlockBtn');
 const adminLockPrompt = document.getElementById('adminLockPrompt');
@@ -161,24 +145,29 @@ const previewContainer = document.getElementById('previewContainer');
 const uploadBtn = document.getElementById('uploadBtn');
 const showcaseContent = document.getElementById('showcaseContent');
 
-// local keys
-const LS_ADMIN_SESSION = "ng_admin_unlocked_v1";
-const LS_MEDIA = "ng_showcase_media_v1";
+/* animation observer */
+const sections = document.querySelectorAll("section");
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('show'); });
+}, {threshold:0.1});
+sections.forEach(s => observer.observe(s));
 
-// check existing admin session
+/* admin session state */
 let isAdmin = localStorage.getItem(LS_ADMIN_SESSION) === "1";
 setAdminUI(isAdmin);
+
+/* load existing showcase */
 loadShowcase();
 
-/* ---- Admin unlock / logout ---- */
+/* unlock / logout */
 unlockBtn.addEventListener('click', () => {
-  const val = adminKeyInput.value || "";
-  if(val === ADMIN_PASSWORD){
+  const entered = (adminKeyInput.value || "").trim();
+  if(entered === ADMIN_PASSWORD){
     isAdmin = true;
     localStorage.setItem(LS_ADMIN_SESSION, "1");
     adminKeyInput.value = "";
     setAdminUI(true);
-    alert("Admin unlocked ✔ — email: " + ADMIN_EMAIL_LABEL);
+    alert("Admin unlocked ✔");
   } else {
     alert("Wrong admin key.");
   }
@@ -196,21 +185,20 @@ function setAdminUI(enabled){
     adminLockPrompt.style.display = "none";
     adminInfo.style.display = "flex";
     adminUpload.style.display = "block";
-    // show delete/edit controls on existing cards
-    renderShowcaseControls();
   } else {
     adminLockPrompt.style.display = "block";
     adminInfo.style.display = "none";
     adminUpload.style.display = "none";
-    renderShowcaseControls();
   }
+  // re-render showcase so controls appear/disappear correctly
+  renderShowcaseControls();
 }
 
-/* ---- Live preview of selected files (before upload) ---- */
+/* live preview before upload */
 fileInput.addEventListener('change', createPreview);
 function createPreview(){
   previewContainer.innerHTML = "";
-  const files = Array.from(fileInput.files);
+  const files = Array.from(fileInput.files || []);
   files.forEach((file, idx) => {
     const reader = new FileReader();
     reader.onload = function(e){
@@ -227,16 +215,12 @@ function createPreview(){
   });
 }
 
-/* ---- Upload selected previewed files ---- */
+/* upload selected previews */
 uploadBtn.addEventListener('click', async () => {
-  if(!isAdmin){
-    alert("Only admin can upload.");
-    return;
-  }
-  const files = Array.from(fileInput.files);
+  if(!isAdmin){ alert("Only admin can upload."); return; }
+  const files = Array.from(fileInput.files || []);
   if(files.length === 0){ alert("Select files first."); return; }
 
-  // process each file, read dataURL and store
   for(let i=0;i<files.length;i++){
     const file = files[i];
     const titleInput = document.getElementById(`p_title_${i}`);
@@ -245,18 +229,18 @@ uploadBtn.addEventListener('click', async () => {
     const obj = { title, type: file.type, data: dataURL };
     saveMedia(obj);
     renderMediaCard(obj);
-    // remove COMING SOON if present
+    // remove coming soon if present
     const cs = document.getElementById('comingSoon');
     if(cs) cs.remove();
   }
 
-  // reset preview and inputs
+  // reset
   fileInput.value = "";
   previewContainer.innerHTML = "";
   alert("Upload complete.");
 });
 
-/* ---- Helpers: read file, save/load media ---- */
+/* helper: read file as dataURL */
 function readFileAsDataURL(file){
   return new Promise((res, rej) => {
     const r = new FileReader();
@@ -266,6 +250,7 @@ function readFileAsDataURL(file){
   });
 }
 
+/* storage helpers */
 function saveMedia(item){
   const arr = JSON.parse(localStorage.getItem(LS_MEDIA) || "[]");
   arr.push(item);
@@ -283,12 +268,10 @@ function loadShowcase(){
   renderShowcaseControls();
 }
 
-/* ---- Render one card into showcase ---- */
 function renderMediaCard(item){
   const card = document.createElement('div');
   card.className = "card";
 
-  // title element (mutable)
   const titleEl = document.createElement('div');
   titleEl.innerHTML = `<strong>${escapeHtml(item.title)}</strong>`;
   card.appendChild(titleEl);
@@ -315,7 +298,6 @@ function renderMediaCard(item){
     card.appendChild(vidWrap);
   }
 
-  // admin controls area (edit/delete) appended conditionally
   if(isAdmin){
     const controls = document.createElement('div');
     controls.className = 'adminControls';
@@ -327,9 +309,7 @@ function renderMediaCard(item){
       const newTitle = prompt("New title:", item.title);
       if(newTitle && newTitle.trim()){
         item.title = newTitle.trim();
-        // update DOM
         titleEl.innerHTML = `<strong>${escapeHtml(item.title)}</strong>`;
-        // persist
         updateStoredItem(item);
       }
     };
@@ -339,10 +319,8 @@ function renderMediaCard(item){
     delBtn.textContent = 'Delete';
     delBtn.onclick = () => {
       if(confirm("Delete this item?")){
-        // remove from storage and DOM
         removeStoredItem(item);
         card.remove();
-        // if now empty, show coming soon
         const remaining = JSON.parse(localStorage.getItem(LS_MEDIA) || "[]");
         if(remaining.length === 0){
           showcaseContent.innerHTML = `<div class="card" id="comingSoon">COMING SOON ✨</div>`;
@@ -358,7 +336,6 @@ function renderMediaCard(item){
   showcaseContent.appendChild(card);
 }
 
-/* ---- Helpers to update/remove saved items (match by data) ---- */
 function updateStoredItem(updated){
   let arr = JSON.parse(localStorage.getItem(LS_MEDIA) || "[]");
   arr = arr.map(it => (it.data === updated.data ? updated : it));
@@ -371,20 +348,26 @@ function removeStoredItem(target){
   localStorage.setItem(LS_MEDIA, JSON.stringify(arr));
 }
 
-/* ---- When admin status toggles, re-render controls on existing cards ---- */
+/* re-render to show/hide admin controls */
 function renderShowcaseControls(){
-  // re-render entire showcase to ensure controls appear/disappear properly
-  loadShowcase();
+  // reload entire showcase so controls reflect current isAdmin
+  const arr = JSON.parse(localStorage.getItem(LS_MEDIA) || "[]");
+  showcaseContent.innerHTML = "";
+  if(arr.length === 0){
+    showcaseContent.innerHTML = `<div class="card" id="comingSoon">COMING SOON ✨</div>`;
+  } else {
+    arr.forEach(item => renderMediaCard(item));
+  }
 }
 
-/* ---- Utilities ---- */
+/* utilities */
 function escapeHtml(text){
-  return text.replace(/[&<>"']/g, function(m){
+  return String(text).replace(/[&<>"']/g, function(m){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m];
   });
 }
 
-/* ---- initialize (render existing cards & if admin initially true show admin UI) ---- */
+/* initialize */
 setAdminUI(isAdmin);
 loadShowcase();
 </script>
