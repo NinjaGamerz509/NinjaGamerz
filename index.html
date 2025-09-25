@@ -86,7 +86,6 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
 #hero { height:auto; min-height:80vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; background:rgba(0,0,0,0.55); margin-bottom:30px; max-width:95vw; position:relative; overflow:hidden; }
 #hero h1 { font-size:2.5rem; color:#1E90FF; }
 #hero p { font-size:1.2rem; color:#1E90FF; }
-.hero-typing { display:inline; border-right: 2px solid #1E90FF; padding-right:2px; white-space:nowrap; overflow:hidden; }
 @media(max-width:600px){ header h1{font-size:1rem;} .skills{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));} #dropdownMenu{top:60px;left:2%;right:2%;} section{padding:30px 3%;} #hero h1{font-size:2rem;} #hero p{font-size:1rem;} }
 </style>
 </head>
@@ -103,7 +102,6 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
 </div>
 <section id="hero">
   <h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
-  <p><span class="hero-typing" id="typing"></span></p>
 </section>
 <section id="aboutMain">
   <h2>About Me</h2>
@@ -137,9 +135,7 @@ const navToggle = document.getElementById('navToggle');
 const dropdownMenu = document.getElementById('dropdownMenu');
 navToggle.addEventListener('click', ()=> {
   dropdownMenu.style.display = dropdownMenu.style.display === 'flex' ? 'none' : 'flex';
-});// Typing animation const typingEl = document.getElementById('typing'); const texts = ["Minecraft Plugin Developer", "Skript Expert", "Server Setup Master"]; let index = 0; let charIndex = 0; let typing = true; function type(){ if(typing){ if(charIndex < texts[index].length){ typingEl.textContent += texts[index].charAt(charIndex); charIndex++; setTimeout(type,100); } else { typing = false; setTimeout(type,1500); } } else { if(charIndex > 0){ typingEl.textContent = texts[index].substring(0,charIndex-1); charIndex--; setTimeout(type,50); } else { typing = true; index = (index +1)%texts.length; setTimeout(type,500); } } } type();
-
-// Scroll animation const sections = document.querySelectorAll('section'); const observer = new IntersectionObserver(entries => { entries.forEach(entry => { if(entry.isIntersecting){ entry.target.classList.add('show'); } }); },{threshold:0.2}); sections.forEach(section => observer.observe(section)); </script>
+});// Scroll animation const sections = document.querySelectorAll('section'); const observer = new IntersectionObserver(entries => { entries.forEach(entry => { if(entry.isIntersecting){ entry.target.classList.add('show'); } }); },{threshold:0.2}); sections.forEach(section => observer.observe(section)); </script>
 
 </body>
 </html>
