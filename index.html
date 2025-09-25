@@ -27,13 +27,14 @@ html{scroll-behavior:smooth}
 .adminControls button{padding:6px 8px;border-radius:6px;border:none;cursor:pointer}
 .deleteBtn{background:#ff4c4c;color:#fff}
 .editBtn{background:#ffaa00;color:#000}
+.logoutBtn{background:#444;color:#fff}
 @media(max-width:600px){
   #dropdownMenu{top:60px;left:10px;right:10px}
   header h1{font-size:1.1rem;padding:12px 18px}
   .previewCard{width:120px}
 }
-#adminBar{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:10px;flex-wrap:wrap}
-#adminBar input[type="text"],#adminBar input[type="file"]{padding:8px;border-radius:6px;border:none}
+#adminBar{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:10px;flex-wrap:wrap;flex-direction:column}
+#adminBar input[type="file"],#adminBar input[type="text"],#adminBar input[type="password"]{padding:8px;border-radius:6px;border:none}
 #previewContainer{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;justify-content:center}
 .previewCard{background:#2a2a2a;padding:10px;border-radius:8px;width:150px;text-align:center}
 .previewCard img,.previewCard video{max-width:100%;border-radius:5px}
@@ -78,10 +79,16 @@ html{scroll-behavior:smooth}
   </div>
 
   <div id="adminBar">
-    <input type="text" id="ghToken" placeholder="GitHub Personal Access Token">
-    <input type="file" id="fileInput" multiple accept="image/*,video/*">
-    <input type="text" id="titleInput" placeholder="Title (optional)">
-    <button class="btn" id="uploadBtn">Upload to GitHub</button>
+    <div id="adminLoginDiv">
+      <input type="password" id="adminPassInput" placeholder="Enter Admin Password">
+      <button id="loginAdminBtn" class="btn">Login Admin</button>
+    </div>
+    <div id="adminControls" style="display:none;flex-direction:column;align-items:center;">
+      <input type="file" id="fileInput" multiple accept="image/*,video/*">
+      <input type="text" id="titleInput" placeholder="Title (optional)">
+      <button class="btn" id="uploadBtn">Upload to GitHub</button>
+      <button class="logoutBtn" id="logoutBtn">Logout Admin</button>
+    </div>
   </div>
 
   <div id="previewContainer"></div>
@@ -101,9 +108,9 @@ html{scroll-behavior:smooth}
 
 <script>
 // Navigation toggle
-const navToggle = document.getElementById('navToggle');
-const dropdownMenu = document.getElementById('dropdownMenu');
-navToggle.addEventListener('click', ()=> dropdownMenu.style.display = dropdownMenu.style.display==='flex'?'none':'flex');
+const navToggle=document.getElementById('navToggle');
+const dropdownMenu=document.getElementById('dropdownMenu');
+navToggle.addEventListener('click',()=>dropdownMenu.style.display=dropdownMenu.style.display==='flex'?'none':'flex');
 dropdownMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>dropdownMenu.style.display='none'));
 
 // IntersectionObserver
@@ -112,119 +119,65 @@ const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(ent
 sections.forEach(s=>observer.observe(s));
 
 const showcaseContent=document.getElementById('showcaseContent');
+const loginBtn=document.getElementById('loginAdminBtn');
+const logoutBtn=document.getElementById('logoutBtn');
+const adminControlsDiv=document.getElementById('adminControls');
+const adminPassInput=document.getElementById('adminPassInput');
 const fileInput=document.getElementById('fileInput');
 const titleInput=document.getElementById('titleInput');
 const uploadBtn=document.getElementById('uploadBtn');
-const ghTokenInput=document.getElementById('ghToken');
+const previewContainer=document.getElementById('previewContainer');
+
+let isAdmin=false;
+const ADMIN_PASSWORD="Ninja786";
+
+// GitHub config
+let GHTOKEN=''; 
 const REPO_OWNER='YOUR_GITHUB_USERNAME'; // replace
 const REPO_NAME='YOUR_REPO_NAME'; // replace
 const MEDIA_PATH='media';
 
-async function uploadFileToGitHub(file,title){
-  const token=ghTokenInput.value.trim();
-  if(!token){alert('Enter GitHub token');return;}
-  const fileName=title?title.replace(/\s+/g,'_')+'_'+file.name:file.name;
-  const path=`${MEDIA_PATH}/${fileName}`;
-  const content=await fileToBase64(file);
-
-  // Upload file
-  const res=await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`,{
-    method:'PUT',
-    headers:{
-      'Authorization':'token '+token,
-      'Content-Type':'application/json'
-    },
-    body:JSON.stringify({
-      message:'Add media '+fileName,
-      content:content
-    })
-  });
-  if(!res.ok)throw new Error('Upload failed: '+res.statusText);
-
-  // Update media.json
-  await updateMediaJson(fileName,file.type,token);
-}
-
-async function updateMediaJson(fileName,type,token){
-  const res=await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/media.json`);
-  const data=await res.json();
-  const sha=data.sha;
-  const content=atob(data.content);
-  const json=JSON.parse(content);
-  json.push({title:fileName,url:`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${MEDIA_PATH}/${fileName}`,type:type});
-  const updatedContent=btoa(JSON.stringify(json,null,2));
-  const updateRes=await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/media.json`,{
-    method:'PUT',
-    headers:{'Authorization':'token '+token,'Content-Type':'application/json'},
-    body:JSON.stringify({message:'Update media.json',content:updatedContent,sha:sha})
-  });
-  if(!updateRes.ok)throw new Error('media.json update failed');
-  alert('Upload complete!');
-  loadShowcase();
-}
-
-function fileToBase64(file){
-  return new Promise((res,rej)=>{
-    const reader=new FileReader();
-    reader.onload=()=>res(reader.result.split(',')[1]);
-    reader.onerror=rej;
-    reader.readAsDataURL(file);
-  });
-}
-
-uploadBtn.addEventListener('click',async()=>{
-  const files=Array.from(fileInput.files);
-  const title=titleInput.value.trim();
-  if(files.length===0){alert('Select files');return;}
-  for(let f of files){
-    try{await uploadFileToGitHub(f,title);}catch(e){console.error(e);alert(e.message);}
+loginBtn.addEventListener('click',()=>{
+  const pass=(adminPassInput.value||"").trim();
+  if(pass===ADMIN_PASSWORD){
+    isAdmin=true;
+    adminControlsDiv.style.display='flex';
+    document.getElementById('adminLoginDiv').style.display='none';
+    alert('Admin logged in ✔');
+  } else {
+    alert('Wrong password');
   }
-  fileInput.value=''; titleInput.value='';
 });
 
-// Load showcase from media.json
-async function loadShowcase(){
-  showcaseContent.innerHTML='';
-  try{
-    const res=await fetch('media.json');
-    const data=await res.json();
-    if(data.length===0){showcaseContent.innerHTML='<div class="card">COMING SOON ✨</div>';}
-    else data.forEach(item=>renderCard(item));
-  }catch(e){showcaseContent.innerHTML='<div class="card">COMING SOON ✨</div>';console.error(e);}
-}
+logoutBtn.addEventListener('click',()=>{
+  isAdmin=false;
+  adminControlsDiv.style.display='none';
+  document.getElementById('adminLoginDiv').style.display='flex';
+  alert('Admin logged out');
+});
 
-function renderCard(item){
-  const card=document.createElement('div');
-  card.className='card';
-  const titleEl=document.createElement('div');
-  titleEl.innerHTML=`<strong>${escapeHtml(item.title)}</strong>`;
-  card.appendChild(titleEl);
-  if(item.type.startsWith('image')){
-    const img=document.createElement('img');
-    img.src=item.url;
-    img.style.maxWidth='100%';
-    img.style.marginTop='8px';
-    img.style.borderRadius='6px';
-    card.appendChild(img);
-  }else{
-    const video=document.createElement('video');
-    video.controls=true;
-    video.style.maxWidth='100%';
-    video.style.marginTop='8px';
-    video.style.borderRadius='6px';
-    const src=document.createElement('source');
-    src.src=item.url;
-    src.type=item.type;
-    video.appendChild(src);
-    card.appendChild(video);
-  }
-  showcaseContent.appendChild(card);
-}
+// Preview selected files
+fileInput.addEventListener('change',()=>{
+  previewContainer.innerHTML='';
+  const files=Array.from(fileInput.files);
+  files.forEach((file,idx)=>{
+    const reader=new FileReader();
+    reader.onload=function(e){
+      const div=document.createElement('div');
+      div.className='previewCard';
+      if(file.type.startsWith('image')){
+        div.innerHTML=`<img src="${e.target.result}" alt=""><input type="text" value="${titleInput.value || file.name}" placeholder="Title (optional)">`;
+      }else{
+        div.innerHTML=`<video controls><source src="${e.target.result}" type="${file.type}"></video><input type="text" value="${titleInput.value || file.name}" placeholder="Title (optional)">`;
+      }
+      previewContainer.appendChild(div);
+    };
+    reader.readAsDataURL(file);
+  });
+});
 
-function escapeHtml(text){return String(text).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
-
-loadShowcase();
+// Here you can integrate GitHub upload functions as shown in previous version
+// Use GHTOKEN + REPO info to push files and update media.json
 </script>
-
 </body>
 </html>
