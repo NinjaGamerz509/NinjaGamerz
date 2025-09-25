@@ -89,7 +89,6 @@
     <div id="adminLockPrompt">
       <input id="adminKeyInput" type="password" placeholder="Enter admin key" />
       <button id="unlockBtn" class="btn">Unlock Admin</button>
-      <!-- removed admin email text as requested -->
     </div>
 
     <div id="adminInfo" style="display:none;align-items:center;gap:10px;">
@@ -123,8 +122,7 @@
 </footer>
 
 <script>
-/* Config */
-const ADMIN_PASSWORD = "Ninja786"; // <- updated as requested
+const ADMIN_PASSWORD = "Ninja786";
 const LS_ADMIN_SESSION = "ng_admin_unlocked_v1";
 const LS_MEDIA = "ng_showcase_media_v1";
 
@@ -152,7 +150,7 @@ const observer = new IntersectionObserver(entries => {
 }, {threshold:0.1});
 sections.forEach(s => observer.observe(s));
 
-/* admin session state */
+/* admin session */
 let isAdmin = localStorage.getItem(LS_ADMIN_SESSION) === "1";
 setAdminUI(isAdmin);
 
@@ -181,20 +179,13 @@ logoutBtn.addEventListener('click', () => {
 });
 
 function setAdminUI(enabled){
-  if(enabled){
-    adminLockPrompt.style.display = "none";
-    adminInfo.style.display = "flex";
-    adminUpload.style.display = "block";
-  } else {
-    adminLockPrompt.style.display = "block";
-    adminInfo.style.display = "none";
-    adminUpload.style.display = "none";
-  }
-  // re-render showcase so controls appear/disappear correctly
+  adminLockPrompt.style.display = enabled ? "none":"block";
+  adminInfo.style.display = enabled ? "flex":"none";
+  adminUpload.style.display = enabled ? "block":"none";
   renderShowcaseControls();
 }
 
-/* live preview before upload */
+/* live preview */
 fileInput.addEventListener('change', createPreview);
 function createPreview(){
   previewContainer.innerHTML = "";
@@ -215,7 +206,7 @@ function createPreview(){
   });
 }
 
-/* upload selected previews */
+/* upload files */
 uploadBtn.addEventListener('click', async () => {
   if(!isAdmin){ alert("Only admin can upload."); return; }
   const files = Array.from(fileInput.files || []);
@@ -228,19 +219,15 @@ uploadBtn.addEventListener('click', async () => {
     const dataURL = await readFileAsDataURL(file);
     const obj = { title, type: file.type, data: dataURL };
     saveMedia(obj);
-    renderMediaCard(obj);
-    // remove coming soon if present
-    const cs = document.getElementById('comingSoon');
-    if(cs) cs.remove();
   }
 
   // reset
   fileInput.value = "";
   previewContainer.innerHTML = "";
+  loadShowcase();
   alert("Upload complete.");
 });
 
-/* helper: read file as dataURL */
 function readFileAsDataURL(file){
   return new Promise((res, rej) => {
     const r = new FileReader();
@@ -250,7 +237,6 @@ function readFileAsDataURL(file){
   });
 }
 
-/* storage helpers */
 function saveMedia(item){
   const arr = JSON.parse(localStorage.getItem(LS_MEDIA) || "[]");
   arr.push(item);
@@ -284,18 +270,16 @@ function renderMediaCard(item){
     img.style.borderRadius='6px';
     card.appendChild(img);
   } else {
-    const vidWrap = document.createElement('div');
-    vidWrap.style.marginTop='8px';
     const video = document.createElement('video');
     video.controls = true;
     video.style.maxWidth='100%';
+    video.style.marginTop='8px';
     video.style.borderRadius='6px';
     const src = document.createElement('source');
     src.src = item.data;
     src.type = item.type;
     video.appendChild(src);
-    vidWrap.appendChild(video);
-    card.appendChild(vidWrap);
+    card.appendChild(video);
   }
 
   if(isAdmin){
@@ -320,11 +304,7 @@ function renderMediaCard(item){
     delBtn.onclick = () => {
       if(confirm("Delete this item?")){
         removeStoredItem(item);
-        card.remove();
-        const remaining = JSON.parse(localStorage.getItem(LS_MEDIA) || "[]");
-        if(remaining.length === 0){
-          showcaseContent.innerHTML = `<div class="card" id="comingSoon">COMING SOON ✨</div>`;
-        }
+        loadShowcase();
       }
     };
 
@@ -348,9 +328,7 @@ function removeStoredItem(target){
   localStorage.setItem(LS_MEDIA, JSON.stringify(arr));
 }
 
-/* re-render to show/hide admin controls */
 function renderShowcaseControls(){
-  // reload entire showcase so controls reflect current isAdmin
   const arr = JSON.parse(localStorage.getItem(LS_MEDIA) || "[]");
   showcaseContent.innerHTML = "";
   if(arr.length === 0){
@@ -360,14 +338,12 @@ function renderShowcaseControls(){
   }
 }
 
-/* utilities */
 function escapeHtml(text){
   return String(text).replace(/[&<>"']/g, function(m){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m];
   });
 }
 
-/* initialize */
 setAdminUI(isAdmin);
 loadShowcase();
 </script>
