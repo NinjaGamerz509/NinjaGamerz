@@ -4,7 +4,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <title>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</title>
 <style>
-/* ===== Body & general ===== */
 body {
   margin:0;
   font-family:Arial,sans-serif;
@@ -12,7 +11,6 @@ body {
   background-size:cover;
   color:#1E90FF;
   overflow-x:hidden;
-  position:relative;
 }
 header {
   display:flex;
@@ -89,10 +87,6 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
 #hero h1 { font-size:2.5rem; color:#1E90FF; }
 #hero p { font-size:1.2rem; color:#1E90FF; }
 .hero-typing { display:inline; border-right: 2px solid #1E90FF; padding-right:2px; white-space:nowrap; overflow:hidden; }
-.progress-bar { background:#222; border-radius:10px; overflow:hidden; margin:10px 0; }
-.progress { height:15px; width:0%; background:#1E90FF; border-radius:10px; transition:width 1.2s ease-in-out; }
-.particle { position:absolute; width:15px; height:15px; background:#1E90FF; opacity:0.6; border-radius:3px; animation:float 10s linear infinite; }
-@keyframes float { 0%{transform:translateY(100vh) translateX(0) rotate(0deg);opacity:0.6;} 50%{opacity:0.3;} 100%{transform:translateY(-10vh) translateX(100px) rotate(360deg);opacity:0;} }
 @media(max-width:600px){ header h1{font-size:1rem;} .skills{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));} #dropdownMenu{top:60px;left:2%;right:2%;} section{padding:30px 3%;} #hero h1{font-size:2rem;} #hero p{font-size:1rem;} }
 </style>
 </head>
@@ -126,9 +120,6 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
     <div class="card">Java Skript</div>
     <div class="card">Skript Maker</div>
   </div>
-  <div class="progress-bar"><div class="progress" data-progress="90"></div></div>
-  <div class="progress-bar"><div class="progress" data-progress="80"></div></div>
-  <div class="progress-bar"><div class="progress" data-progress="75"></div></div>
 </section>
 <section id="platforms">
   <h2>My Platforms</h2>
@@ -144,14 +135,45 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
 const navToggle = document.getElementById('navToggle');
 const dropdownMenu = document.getElementById('dropdownMenu');
 navToggle.addEventListener('click', ()=> {
-  navToggle.classList.toggle('open');
   dropdownMenu.style.display = dropdownMenu.style.display === 'flex' ? 'none' : 'flex';
 });
-dropdownMenu.querySelectorAll('a').forEach(a => {
-  a.addEventListener('click', e => {
-    e.preventDefault();
-    const targetId = a.getAttribute('href').substring(1);
-    const targetEl = document.getElementById(targetId);
-    if(targetEl){
-      targetEl.scrollIntoView({behavior:'smooth', block:'start'});
-      dropdownMenu.style.display
+const typingEl = document.getElementById('typing');
+const texts = ["Minecraft Plugin Developer", "Skript Expert", "Server Setup Master"];
+let index = 0;
+let charIndex = 0;
+let typing = true;
+function type(){
+  if(typing){
+    if(charIndex < texts[index].length){
+      typingEl.textContent += texts[index].charAt(charIndex);
+      charIndex++;
+      setTimeout(type,100);
+    } else {
+      typing = false;
+      setTimeout(type,1500);
+    }
+  } else {
+    if(charIndex > 0){
+      typingEl.textContent = texts[index].substring(0,charIndex-1);
+      charIndex--;
+      setTimeout(type,50);
+    } else {
+      typing = true;
+      index = (index +1)%texts.length;
+      setTimeout(type,500);
+    }
+  }
+}
+type();
+const sections = document.querySelectorAll('section');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('show');
+    }
+  });
+},{threshold:0.2});
+sections.forEach(section => observer.observe(section));
+</script>
+</body>
+</html>
