@@ -5,19 +5,103 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</title>
 <style>
-  body{margin:0;font-family:Arial, sans-serif;background:#0c0c0c;color:#fff;overflow-x:hidden}
-  header{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 20px;background:#111;position:sticky;top:0;z-index:10}
-  .nav-toggle{cursor:pointer;width:30px;height:25px;display:flex;flex-direction:column;justify-content:space-between;position:fixed;top:20px;left:20px;z-index:25}
-  .nav-toggle span{display:block;height:3px;background:#fff;border-radius:2px;transition:0.3s}
-  header h1{margin:0;position:fixed;top:10px;right:20px;padding:15px 25px;background:#222;border-radius:10px;box-shadow:0 3px 6px rgba(0,0,0,.5);font-size:1.3rem}
-  #dropdownMenu{position:fixed;top:60px;left:20px;background:#1c1c1c;padding:10px 20px;border-radius:8px;display:none;flex-direction:column;z-index:20}
-  #dropdownMenu a{color:#fff;text-decoration:none;margin:5px 0;font-weight:700}
-  #dropdownMenu a:hover{color:#a020f0}
-  .btn{display:inline-block;margin:10px 5px;padding:12px 20px;border-radius:8px;background:#a020f0;color:#fff;font-weight:700;text-decoration:none;cursor:pointer}
-  .btn:hover{background:#7a0fc4}
-  section{padding:60px 20px;text-align:center;opacity:0;transform:translateY(50px);transition:all .8s ease-out}
-  section.show{opacity:1;transform:translateY(0)}
-  h2{font-size:2rem;margin-bottom:20px;color:#a020f0}
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0c0c0c;
+    color: #fff;
+    overflow-x: hidden;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 20px;
+    background: #111;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .nav-toggle {
+    cursor: pointer;
+    width: 30px;
+    height: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 25;
+  }
+  .nav-toggle span {
+    display: block;
+    height: 3px;
+    background: #fff;
+    border-radius: 2px;
+    transition: 0.3s;
+  }
+  header h1 {
+    margin: 0;
+    position: fixed;
+    top: 10px;
+    right: 20px;
+    padding: 15px 25px;
+    background: #222;
+    border-radius: 10px;
+    box-shadow: 0 3px 6px rgba(0,0,0,.5);
+    font-size: 1.3rem;
+  }
+  #dropdownMenu {
+    position: fixed;
+    top: 60px;
+    left: 20px;
+    background: #1c1c1c;
+    padding: 10px 20px;
+    border-radius: 8px;
+    display: none;
+    flex-direction: column;
+    z-index: 20;
+  }
+  #dropdownMenu a {
+    color: #fff;
+    text-decoration: none;
+    margin: 5px 0;
+    font-weight: 700;
+  }
+  #dropdownMenu a:hover {
+    color: #a020f0;
+  }
+  .btn {
+    display: inline-block;
+    margin: 10px 5px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    background: #a020f0;
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .btn:hover {
+    background: #7a0fc4;
+  }
+  section {
+    padding: 60px 20px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all .8s ease-out;
+  }
+  section.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #a020f0;
+  }
   .skills {
     display: grid;
     grid-template-columns: 1fr; /* Single column */
@@ -27,31 +111,122 @@
     margin-left: auto;
     margin-right: auto;
   }
-  .showcase{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-top:20px}
-  .card{background:#1c1c1c;padding:20px;border-radius:10px;position:relative;min-height: 100px; width: 100%; box-sizing: border-box;}
-  .card:hover{background:#2a2a2a;transition:.3s}
-  footer{padding:20px;background:#111;margin-top:30px;text-align:center}
-  html{scroll-behavior:smooth}
+  .showcase {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .card {
+    background: #1c1c1c;
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
+    min-height: 120px; /* Increased for taller boxes */
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .card:hover {
+    background: #2a2a2a;
+    transition: .3s;
+  }
+  footer {
+    padding: 20px;
+    background: #111;
+    margin-top: 30px;
+    text-align: center;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
 
   /* admin + preview styles */
-  #adminBar{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:10px;flex-wrap:wrap}
-  #adminBar input[type="password"], #adminBar input[type="text"], #adminUpload input[type="text"]{padding:8px;border-radius:6px;border:none}
-  #adminUpload{margin-top:20px;display:none;text-align:center}
-  #previewContainer{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;justify-content:center}
-  .previewCard{background:#2a2a2a;padding:10px;border-radius:8px;width:150px;text-align:center}
-  .previewCard img,.previewCard video{max-width:100%;border-radius:5px}
-  .previewCard input{width:90%;margin-top:6px;padding:6px;border-radius:6px;border:none}
+  #adminBar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  #adminBar input[type="password"], #adminBar input[type="text"], #adminUpload input[type="text"] {
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+  }
+  #adminUpload {
+    margin-top: 20px;
+    display: none;
+    text-align: center;
+  }
+  #previewContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: center;
+  }
+  .previewCard {
+    background: #2a2a2a;
+    padding: 10px;
+    border-radius: 8px;
+    width: 150px;
+    text-align: center;
+  }
+  .previewCard img, .previewCard video {
+    max-width: 100%;
+    border-radius: 5px;
+  }
+  .previewCard input {
+    width: 90%;
+    margin-top: 6px;
+    padding: 6px;
+    border-radius: 6px;
+    border: none;
+  }
 
-  .adminControls{display:flex;gap:6px;margin-top:8px;justify-content:center}
-  .adminControls button{padding:6px 8px;border-radius:6px;border:none;cursor:pointer}
-  .deleteBtn{background:#ff4c4c;color:#fff}
-  .editBtn{background:#ffaa00;color:#000}
-  .logoutBtn{background:#444;color:#fff;padding:6px 10px;border-radius:6px;border:none;cursor:pointer}
+  .adminControls {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    justify-content: center;
+  }
+  .adminControls button {
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+  .deleteBtn {
+    background: #ff4c4c;
+    color: #fff;
+  }
+  .editBtn {
+    background: #ffaa00;
+    color: #000;
+  }
+  .logoutBtn {
+    background: #444;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
 
-  @media(max-width:600px){
-    #dropdownMenu{top:60px;left:10px;right:10px}
-    header h1{font-size:1.1rem;padding:12px 18px}
-    .previewCard{width:120px}
+  @media(max-width: 600px) {
+    #dropdownMenu {
+      top: 60px;
+      left: 10px;
+      right: 10px;
+    }
+    header h1 {
+      font-size: 1.1rem;
+      padding: 12px 18px;
+    }
+    .previewCard {
+      width: 120px;
+    }
   }
 </style>
 </head>
@@ -140,8 +315,8 @@ const LS_MEDIA = "ng_showcase_media_v1";
 /* UI refs */
 const navToggle = document.getElementById('navToggle');
 const dropdownMenu = document.getElementById('dropdownMenu');
-navToggle.addEventListener('click', ()=> dropdownMenu.style.display = dropdownMenu.style.display === 'flex' ? 'none' : 'flex');
-dropdownMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', ()=> dropdownMenu.style.display='none'));
+navToggle.addEventListener('click', () => dropdownMenu.style.display = dropdownMenu.style.display === 'flex' ? 'none' : 'flex');
+dropdownMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => dropdownMenu.style.display='none'));
 
 const adminKeyInput = document.getElementById('adminKeyInput');
 const unlockBtn = document.getElementById('unlockBtn');
@@ -158,7 +333,7 @@ const showcaseContent = document.getElementById('showcaseContent');
 const sections = document.querySelectorAll("section");
 const observer = new IntersectionObserver(entries => {
   entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('show'); });
-}, {threshold:0.1});
+}, {threshold: 0.1});
 sections.forEach(s => observer.observe(s));
 
 /* admin session state */
@@ -230,7 +405,7 @@ uploadBtn.addEventListener('click', async () => {
   const files = Array.from(fileInput.files || []);
   if(files.length === 0){ alert("Select files first."); return; }
 
-  for(let i=0;i<files.length;i++){
+  for(let i=0; i<files.length; i++){
     const file = files[i];
     const titleInput = document.getElementById(`p_title_${i}`);
     const title = (titleInput && titleInput.value.trim()) ? titleInput.value.trim() : file.name;
@@ -288,17 +463,17 @@ function renderMediaCard(item){
   if(item.type && item.type.startsWith('image')){
     const img = document.createElement('img');
     img.src = item.data;
-    img.style.max-width='100%';
-    img.style.margin-top='8px';
-    img.style.border-radius='6px';
+    img.style.max-width = '100%';
+    img.style.margin-top = '8px';
+    img.style.border-radius = '6px';
     card.appendChild(img);
   } else {
     const vidWrap = document.createElement('div');
-    vidWrap.style.margin-top='8px';
+    vidWrap.style.margin-top = '8px';
     const video = document.createElement('video');
     video.controls = true;
-    video.style.max-width='100%';
-    video.style.border-radius='6px';
+    video.style.max-width = '100%';
+    video.style.border-radius = '6px';
     const src = document.createElement('source');
     src.src = item.data;
     src.type = item.type;
