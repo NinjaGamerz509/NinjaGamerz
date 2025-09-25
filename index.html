@@ -3,18 +3,14 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</title>
+<title>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉 AI Chat</title>
 <style>
 body{margin:0;font-family:Arial,sans-serif;background:#0c0c0c;color:#fff;overflow-x:hidden}
 header{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 20px;background:#111;position:sticky;top:0;z-index:10}
-.nav-toggle{cursor:pointer;width:30px;height:25px;display:flex;flex-direction:column;justify-content:space-between;position:fixed;top:20px;left:20px;z-index:25}
-.nav-toggle span{display:block;height:3px;background:#fff;border-radius:2px;transition:0.3s}
-header h1{margin:0;position:fixed;top:10px;right:20px;padding:15px 25px;background:#222;border-radius:10px;box-shadow:0 3px 6px rgba(0,0,0,.5);font-size:1.3rem}
+header h1{margin:0;position:fixed;top:10px;right:20px;padding:15px 25px;background:#222;border-radius:10px;font-size:1.3rem}
 #dropdownMenu{position:fixed;top:60px;left:20px;background:#1c1c1c;padding:10px 20px;border-radius:8px;display:none;flex-direction:column;z-index:20}
 #dropdownMenu a{color:#fff;text-decoration:none;margin:5px 0;font-weight:700}
 #dropdownMenu a:hover{color:#a020f0}
-.btn{display:inline-block;margin:10px 5px;padding:12px 20px;border-radius:8px;background:#a020f0;color:#fff;font-weight:700;text-decoration:none;cursor:pointer}
-.btn:hover{background:#7a0fc4}
 section{padding:60px 20px;text-align:center;opacity:0;transform:translateY(50px);transition:all .8s ease-out}
 section.show{opacity:1;transform:translateY(0)}
 h2{font-size:2rem;margin-bottom:20px;color:#a020f0}
@@ -22,28 +18,24 @@ h2{font-size:2rem;margin-bottom:20px;color:#a020f0}
 .card{background:#1c1c1c;padding:20px;border-radius:10px;position:relative}
 .card:hover{background:#2a2a2a;transition:.3s}
 footer{padding:20px;background:#111;margin-top:30px;text-align:center}
-html{scroll-behavior:smooth}
 input,textarea,button{padding:8px;border-radius:6px;border:none;margin:5px}
 button{background:#a020f0;color:#fff;cursor:pointer}
 button:hover{background:#7a0fc4}
 #messages{border:1px solid #444;padding:10px;height:200px;overflow-y:auto;margin-bottom:10px;background:#1c1c1c;text-align:left}
 #ai-response{margin-top:10px;padding:10px;background:#1c1c1c;border-radius:6px;text-align:left}
-@media(max-width:600px){
-    #dropdownMenu{top:60px;left:10px;right:10px}
-    header h1{font-size:1.1rem;padding:12px 18px}
-}
 </style>
+
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+
 <!-- OpenAI -->
 <script src="https://cdn.jsdelivr.net/npm/openai@4.0.0/dist/openai.min.js"></script>
 </head>
 <body>
 
 <header>
-  <div class="nav-toggle" id="navToggle"><span></span><span></span><span></span></div>
-  <h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
+  <h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉 AI Chat</h1>
 </header>
 
 <div id="dropdownMenu">
@@ -74,21 +66,13 @@ button:hover{background:#7a0fc4}
 <section id="aiChatSection">
   <h2>AI & Live Chat</h2>
 
-  <!-- Admin Login -->
-  <div id="admin-login">
-    <input type="password" id="admin-password" placeholder="Enter Admin Password">
-    <button onclick="login()">Login</button>
-  </div>
-
-  <!-- Admin AI Panel -->
-  <div id="admin-panel" style="display:none">
-    <textarea id="ai-prompt" placeholder="Enter AI prompt" rows="3" style="width:100%"></textarea><br>
-    <button onclick="generateAIResponse()">Generate AI Response</button>
-    <div id="ai-response"></div>
-  </div>
+  <!-- AI chat for all -->
+  <textarea id="ai-prompt" placeholder="Ask AI anything..." rows="3" style="width:100%"></textarea><br>
+  <button onclick="generateAIResponse()">Send to AI</button>
+  <div id="ai-response"></div>
 
   <!-- Live Chat -->
-  <div id="chat-section" style="margin-top:20px;text-align:center">
+  <div style="margin-top:20px;text-align:center">
     <div id="messages"></div>
     <input type="text" id="chat-input" placeholder="Type a message" style="width:80%">
     <button onclick="sendMessage()">Send</button>
@@ -108,34 +92,19 @@ button:hover{background:#7a0fc4}
 </footer>
 
 <script>
-/* Nav toggle */
-const navToggle = document.getElementById('navToggle');
+// ===== Nav toggle =====
 const dropdownMenu = document.getElementById('dropdownMenu');
-navToggle.addEventListener('click', ()=> dropdownMenu.style.display = dropdownMenu.style.display === 'flex' ? 'none' : 'flex');
-dropdownMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', ()=> dropdownMenu.style.display='none'));
 
-/* Section animation */
+// Section animation
 const sections = document.querySelectorAll("section");
 const observer = new IntersectionObserver(entries => { entries.forEach(entry=>{ if(entry.isIntersecting) entry.target.classList.add('show'); })},{threshold:0.1});
 sections.forEach(s=>observer.observe(s));
 
-/* ===== Admin Login ===== */
-let isAdmin=false;
-function login(){
-  const pass=document.getElementById("admin-password").value.trim();
-  if(pass==="Ninja786"){
-    isAdmin=true;
-    document.getElementById("admin-login").style.display="none";
-    document.getElementById("admin-panel").style.display="block";
-    alert("Admin logged in ✔");
-  } else { alert("Wrong password"); }
-}
-
-/* ===== OpenAI AI Generator ===== */
-const openai = new OpenAI({ apiKey: "YOUR_OPENAI_API_KEY" });
+// ===== OpenAI AI Chat =====
+// Replace with your OpenAI API key
+const openai = new OpenAI({ apiKey: "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" });
 
 async function generateAIResponse(){
-  if(!isAdmin){ alert("Admin only"); return;}
   const prompt=document.getElementById("ai-prompt").value.trim();
   if(!prompt){ alert("Enter prompt"); return;}
   try{
@@ -144,10 +113,11 @@ async function generateAIResponse(){
       messages:[{role:"user",content:prompt}]
     });
     document.getElementById("ai-response").innerText = response.choices[0].message.content;
+    document.getElementById("ai-prompt").value="";
   } catch(e){ console.error(e); alert("Error: "+e.message);}
 }
 
-/* ===== Firebase Chat ===== */
+// ===== Firebase Chat =====
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_AUTH_DOMAIN",
@@ -164,7 +134,10 @@ const messagesRef = db.ref("messages");
 function sendMessage(){
   const msgInput=document.getElementById("chat-input");
   const message=msgInput.value.trim();
-  if(message){ messagesRef.push({ message }); msgInput.value=""; }
+  if(message){
+    messagesRef.push({ message });
+    msgInput.value="";
+  }
 }
 
 messagesRef.on("child_added",snapshot=>{
