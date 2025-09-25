@@ -12,6 +12,7 @@ body {
   background-size:cover;
   color:#1E90FF;
   overflow-x:hidden;
+  position:relative;
 }
 header {
   display:flex;
@@ -87,7 +88,8 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
 #hero { height:auto; min-height:80vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; background:rgba(0,0,0,0.55); margin-bottom:30px; max-width:95vw; }
 #hero h1 { font-size:2.5rem; color:#1E90FF; }
 #hero p { font-size:1.2rem; color:#1E90FF; }
-#scrollProgress { position:fixed; top:0; left:0; width:0; height:4px; background:#1E90FF; z-index:50; transition: width 0.25s ease; }
+.progress-bar { background:#222; border-radius:10px; overflow:hidden; margin:10px 0; }
+.progress { height:15px; width:0%; background:#1E90FF; border-radius:10px; transition:width 1.2s ease-in-out; }
 .particle { position:absolute; width:15px; height:15px; background:#1E90FF; opacity:0.6; border-radius:3px; animation:float 10s linear infinite; }
 @keyframes float { 0%{transform:translateY(100vh) translateX(0) rotate(0deg);opacity:0.6;} 50%{opacity:0.3;} 100%{transform:translateY(-10vh) translateX(100px) rotate(360deg);opacity:0;} }
 @media(max-width:600px){ header h1{font-size:1rem;} .skills{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));} #dropdownMenu{top:60px;left:2%;right:2%;} section{padding:30px 3%;} #hero h1{font-size:2rem;} #hero p{font-size:1rem;} }
@@ -124,6 +126,9 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
     <div class="card">Java Skript</div>
     <div class="card">Skript Maker</div>
   </div>
+  <div class="progress-bar"><div class="progress" data-progress="90"></div></div>
+  <div class="progress-bar"><div class="progress" data-progress="80"></div></div>
+  <div class="progress-bar"><div class="progress" data-progress="75"></div></div>
 </section>
 <section id="platforms">
   <h2>My Platforms</h2>
@@ -160,10 +165,20 @@ const observer = new IntersectionObserver(entries => {
       entry.target.classList.add('show');
       const cards = entry.target.querySelectorAll('.card');
       cards.forEach((card,i)=>{card.style.transitionDelay = `${i*0.1}s`;});
+      const progressBars = entry.target.querySelectorAll('.progress');
+      progressBars.forEach(bar => { bar.style.width = bar.getAttribute('data-progress') + '%'; });
     }
   });
 },{threshold:0.2});
 sections.forEach(section => observer.observe(section));
+for(let i=0;i<25;i++){
+  const particle = document.createElement('div');
+  particle.classList.add('particle');
+  particle.style.left = Math.random()*100 + 'vw';
+  particle.style.animationDuration = (5+Math.random()*5)+'s';
+  particle.style.width = particle.style.height = (10+Math.random()*15)+'px';
+  document.body.appendChild(particle);
+}
 </script>
 </body>
 </html>
