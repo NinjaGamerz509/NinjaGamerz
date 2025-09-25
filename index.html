@@ -85,9 +85,10 @@ h2 { font-size:1.8rem; margin-bottom:20px; color:#1E90FF; }
 .platform-btn { padding:10px 15px; border-radius:8px; background:#1E90FF; color:#fff; text-decoration:none; margin:5px; display:inline-block; transition:transform 0.3s, box-shadow 0.3s; }
 .platform-btn:hover { transform:translateY(-3px) scale(1.03); box-shadow:0 6px 15px rgba(30,144,255,0.6); }
 footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdrop-filter:blur(6px); }
-#hero { height:auto; min-height:80vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; background:rgba(0,0,0,0.55); margin-bottom:30px; max-width:95vw; }
+#hero { height:auto; min-height:80vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; background:rgba(0,0,0,0.55); margin-bottom:30px; max-width:95vw; position:relative; overflow:hidden; }
 #hero h1 { font-size:2.5rem; color:#1E90FF; }
 #hero p { font-size:1.2rem; color:#1E90FF; }
+.hero-typing { display:inline; border-right: 2px solid #1E90FF; padding-right:2px; white-space:nowrap; overflow:hidden; }
 .progress-bar { background:#222; border-radius:10px; overflow:hidden; margin:10px 0; }
 .progress { height:15px; width:0%; background:#1E90FF; border-radius:10px; transition:width 1.2s ease-in-out; }
 .particle { position:absolute; width:15px; height:15px; background:#1E90FF; opacity:0.6; border-radius:3px; animation:float 10s linear infinite; }
@@ -96,7 +97,6 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
 </style>
 </head>
 <body>
-<div id="scrollProgress"></div>
 <header>
   <div class="nav-toggle" id="navToggle"><span></span><span></span><span></span></div>
   <h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
@@ -109,7 +109,7 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
 </div>
 <section id="hero">
   <h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
-  <p>Minecraft Plugin Developer & Skript Expert</p>
+  <p><span class="hero-typing" id="typing"></span></p>
 </section>
 <section id="aboutMain">
   <h2>About Me</h2>
@@ -154,31 +154,4 @@ dropdownMenu.querySelectorAll('a').forEach(a => {
     const targetEl = document.getElementById(targetId);
     if(targetEl){
       targetEl.scrollIntoView({behavior:'smooth', block:'start'});
-      dropdownMenu.style.display = 'none';
-    }
-  });
-});
-const sections = document.querySelectorAll("section");
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if(entry.isIntersecting){
-      entry.target.classList.add('show');
-      const cards = entry.target.querySelectorAll('.card');
-      cards.forEach((card,i)=>{card.style.transitionDelay = `${i*0.1}s`;});
-      const progressBars = entry.target.querySelectorAll('.progress');
-      progressBars.forEach(bar => { bar.style.width = bar.getAttribute('data-progress') + '%'; });
-    }
-  });
-},{threshold:0.2});
-sections.forEach(section => observer.observe(section));
-for(let i=0;i<25;i++){
-  const particle = document.createElement('div');
-  particle.classList.add('particle');
-  particle.style.left = Math.random()*100 + 'vw';
-  particle.style.animationDuration = (5+Math.random()*5)+'s';
-  particle.style.width = particle.style.height = (10+Math.random()*15)+'px';
-  document.body.appendChild(particle);
-}
-</script>
-</body>
-</html>
+      dropdownMenu.style.display
