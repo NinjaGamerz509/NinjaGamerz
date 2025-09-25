@@ -96,7 +96,7 @@ const observer = new IntersectionObserver(entries => {
 },{threshold:0.1});
 sections.forEach(s=>observer.observe(s));
 
-// ===== Firebase Chat =====
+// ===== Firebase Live Chat =====
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_AUTH_DOMAIN",
@@ -127,23 +127,31 @@ messagesRef.on("child_added",snapshot=>{
   document.getElementById("messages").scrollTop=document.getElementById("messages").scrollHeight;
 });
 
-// ===== AI Chat via backend =====
+// ===== AI Chat via GPT-5 backend =====
 async function generateAIResponse(){
-  const prompt=document.getElementById("ai-prompt").value.trim();
-  if(!prompt){ alert("Enter prompt"); return;}
+  const prompt = document.getElementById("ai-prompt").value.trim();
+  if(!prompt){ alert("Enter prompt"); return; }
+
   try{
-    const res = await fetch("http://localhost:3000/ai-chat", { // backend server URL
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({prompt})
+    const res = await fetch("https://YOUR_BACKEND_URL/ai-chat", { // Replace with your hosted backend URL
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt })
     });
+
     const data = await res.json();
-    if(data.reply) document.getElementById("ai-response").innerText = data.reply;
-    else alert(data.error || "Error");
+    if(data.reply){
+      document.getElementById("ai-response").innerText = data.reply;
+    } else {
+      alert(data.error || "Error from AI server");
+    }
     document.getElementById("ai-prompt").value="";
-  } catch(e){ console.error(e); alert("Error: "+e.message);}
+  } catch(e){
+    console.error(e);
+    alert("Cannot connect to AI server. Make sure backend is running and URL is correct.");
+  }
 }
 </script>
 
 </body>
-                    </html>
+</html>
