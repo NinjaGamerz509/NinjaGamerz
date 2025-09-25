@@ -75,7 +75,19 @@ const dropdownMenu = document.getElementById('dropdownMenu');
 navToggle.addEventListener('click', ()=> {
   dropdownMenu.style.display = dropdownMenu.style.display === 'flex' ? 'none' : 'flex';
 });
-dropdownMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', ()=> dropdownMenu.style.display='none'));
+
+// ===== Smooth scroll for menu links =====
+dropdownMenu.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const targetId = a.getAttribute('href').substring(1);
+    const targetEl = document.getElementById(targetId);
+    if(targetEl){
+      targetEl.scrollIntoView({behavior:'smooth', block:'start'});
+      dropdownMenu.style.display = 'none'; // close menu after click
+    }
+  });
+});
 
 // ===== Fancy Scroll animation =====
 const sections = document.querySelectorAll("section");
@@ -95,7 +107,7 @@ var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
 (function(){
 var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
 s1.async=true;
-s1.src='https://embed.tawk.to/68d558bcafde891950e94971/default';
+s1.src='https://embed.tawk.to/YOUR_PROPERTY_ID/default';
 s1.charset='UTF-8';
 s1.setAttribute('crossorigin','*');
 s0.parentNode.insertBefore(s1,s0);
