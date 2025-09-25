@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉 AI Chat</title>
+<title>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉 AI & Chat</title>
 <style>
 body{margin:0;font-family:Arial,sans-serif;background:#0c0c0c;color:#fff;overflow-x:hidden}
 header{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 20px;background:#111;position:sticky;top:0;z-index:10}
@@ -17,25 +17,22 @@ h2{font-size:2rem;margin-bottom:20px;color:#a020f0}
 .skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-top:20px}
 .card{background:#1c1c1c;padding:20px;border-radius:10px;position:relative}
 .card:hover{background:#2a2a2a;transition:.3s}
-footer{padding:20px;background:#111;margin-top:30px;text-align:center}
-input,textarea,button{padding:8px;border-radius:6px;border:none;margin:5px}
+textarea,input,button{padding:8px;border-radius:6px;border:none;margin:5px}
 button{background:#a020f0;color:#fff;cursor:pointer}
 button:hover{background:#7a0fc4}
 #messages{border:1px solid #444;padding:10px;height:200px;overflow-y:auto;margin-bottom:10px;background:#1c1c1c;text-align:left}
 #ai-response{margin-top:10px;padding:10px;background:#1c1c1c;border-radius:6px;text-align:left}
+footer{padding:20px;background:#111;margin-top:30px;text-align:center}
 </style>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
-
-<!-- OpenAI -->
-<script src="https://cdn.jsdelivr.net/npm/openai@4.0.0/dist/openai.min.js"></script>
 </head>
 <body>
 
 <header>
-  <h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉 AI Chat</h1>
+  <h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉 AI & Chat</h1>
 </header>
 
 <div id="dropdownMenu">
@@ -66,7 +63,7 @@ button:hover{background:#7a0fc4}
 <section id="aiChatSection">
   <h2>AI & Live Chat</h2>
 
-  <!-- AI chat for all -->
+  <!-- AI chat -->
   <textarea id="ai-prompt" placeholder="Ask AI anything..." rows="3" style="width:100%"></textarea><br>
   <button onclick="generateAIResponse()">Send to AI</button>
   <div id="ai-response"></div>
@@ -82,8 +79,8 @@ button:hover{background:#7a0fc4}
 <section id="platforms">
   <h2>My Platforms</h2>
   <p>
-    <a href="https://discord.gg/4RrCaXR9C7" target="_blank" class="btn">💬 Discord</a>
-    <a href="https://youtube.com/@ninja_gamerz2692" target="_blank" class="btn">▶️ YouTube</a>
+    <a href="https://discord.gg/4RrCaXR9C7" target="_blank" style="padding:12px 20px;border-radius:8px;background:#a020f0;color:#fff;text-decoration:none;margin:5px;display:inline-block;">💬 Discord</a>
+    <a href="https://youtube.com/@ninja_gamerz2692" target="_blank" style="padding:12px 20px;border-radius:8px;background:#a020f0;color:#fff;text-decoration:none;margin:5px;display:inline-block;">▶️ YouTube</a>
   </p>
 </section>
 
@@ -92,30 +89,12 @@ button:hover{background:#7a0fc4}
 </footer>
 
 <script>
-// ===== Nav toggle =====
-const dropdownMenu = document.getElementById('dropdownMenu');
-
-// Section animation
+// ===== Section animation =====
 const sections = document.querySelectorAll("section");
-const observer = new IntersectionObserver(entries => { entries.forEach(entry=>{ if(entry.isIntersecting) entry.target.classList.add('show'); })},{threshold:0.1});
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('show'); });
+},{threshold:0.1});
 sections.forEach(s=>observer.observe(s));
-
-// ===== OpenAI AI Chat =====
-// Replace with your OpenAI API key
-const openai = new OpenAI({ apiKey: "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" });
-
-async function generateAIResponse(){
-  const prompt=document.getElementById("ai-prompt").value.trim();
-  if(!prompt){ alert("Enter prompt"); return;}
-  try{
-    const response = await openai.chat.completions.create({
-      model:"gpt-4o",
-      messages:[{role:"user",content:prompt}]
-    });
-    document.getElementById("ai-response").innerText = response.choices[0].message.content;
-    document.getElementById("ai-prompt").value="";
-  } catch(e){ console.error(e); alert("Error: "+e.message);}
-}
 
 // ===== Firebase Chat =====
 const firebaseConfig = {
@@ -147,6 +126,24 @@ messagesRef.on("child_added",snapshot=>{
   document.getElementById("messages").appendChild(msgDiv);
   document.getElementById("messages").scrollTop=document.getElementById("messages").scrollHeight;
 });
+
+// ===== AI Chat via backend =====
+async function generateAIResponse(){
+  const prompt=document.getElementById("ai-prompt").value.trim();
+  if(!prompt){ alert("Enter prompt"); return;}
+  try{
+    const res = await fetch("http://localhost:3000/ai-chat", { // backend server URL
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({prompt})
+    });
+    const data = await res.json();
+    if(data.reply) document.getElementById("ai-response").innerText = data.reply;
+    else alert(data.error || "Error");
+    document.getElementById("ai-prompt").value="";
+  } catch(e){ console.error(e); alert("Error: "+e.message);}
+}
 </script>
+
 </body>
-</html>
+                    </html>
