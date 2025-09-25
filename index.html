@@ -13,9 +13,7 @@ body{
   color:#1E90FF;
   overflow-x:hidden;
   transition: background 0.5s, color 0.5s;
-}/* ===== Dark/Light Theme ===== */ body.light{ background:#f0f0f0 url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?fit=crop&w=1920&q=80') no-repeat center center fixed; color:#1E3A8A; }
-
-/* ===== Header ===== */ header{ display:flex; justify-content:space-between; align-items:flex-start; padding:10px 20px; background:rgba(17,17,17,0.85); position:sticky; top:0; z-index:10; backdrop-filter:blur(6px); transition:background 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.5); } .nav-toggle{ cursor:pointer; width:30px;height:25px; display:flex; flex-direction:column; justify-content:space-between; position:fixed;top:20px;left:20px;z-index:25 } .nav-toggle span{ display:block; height:3px; background:#1E90FF; border-radius:2px; transition:0.3s } .nav-toggle.open span:nth-child(1){transform: rotate(45deg) translate(5px,5px);} .nav-toggle.open span:nth-child(2){opacity:0;} .nav-toggle.open span:nth-child(3){transform: rotate(-45deg) translate(6px,-6px);}
+}/* ===== Header ===== */ header{ display:flex; justify-content:space-between; align-items:flex-start; padding:10px 20px; background:rgba(17,17,17,0.85); position:sticky; top:0; z-index:10; backdrop-filter:blur(6px); transition:background 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.5); } .nav-toggle{ cursor:pointer; width:30px;height:25px; display:flex; flex-direction:column; justify-content:space-between; position:fixed;top:20px;left:20px;z-index:25 } .nav-toggle span{ display:block; height:3px; background:#1E90FF; border-radius:2px; transition:0.3s } .nav-toggle.open span:nth-child(1){transform: rotate(45deg) translate(5px,5px);} .nav-toggle.open span:nth-child(2){opacity:0;} .nav-toggle.open span:nth-child(3){transform: rotate(-45deg) translate(6px,-6px);}
 
 header h1{ margin:0; position:fixed; top:10px; right:20px; padding:15px 25px; background:rgba(34,34,34,0.85); border-radius:10px; box-shadow:0 3px 6px rgba(0,0,0,.5); font-size:1.6rem; transition:transform 0.5s, opacity 0.5s; }
 
@@ -47,7 +45,6 @@ h2{font-size:2rem;margin-bottom:20px;color:#1E90FF}
 <header>
   <div class="nav-toggle" id="navToggle"><span></span><span></span><span></span></div>
   <h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
-  <button id="themeToggle" style="position:fixed;top:20px;right:150px;padding:8px 12px;border:none;border-radius:6px;background:#1E90FF;color:#fff;cursor:pointer;z-index:30;">Toggle Theme</button>
 </header>
 <div id="dropdownMenu">
   <a href="#hero">Home</a>
@@ -113,10 +110,6 @@ const observer = new IntersectionObserver(entries => {
   });
 },{threshold:0.2});
 sections.forEach(section => observer.observe(section));
-
-// ===== Theme toggle =====
-const themeToggle = document.getElementById('themeToggle');
-themeToggle.addEventListener('click', ()=>{document.body.classList.toggle('light');});
 
 // ===== Scroll progress =====
 window.addEventListener('scroll', ()=>{
