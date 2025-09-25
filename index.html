@@ -132,48 +132,14 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
   <p>© 2025 𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉 | All Rights Reserved</p>
 </footer>
 <script>
+// Hamburger menu
 const navToggle = document.getElementById('navToggle');
 const dropdownMenu = document.getElementById('dropdownMenu');
 navToggle.addEventListener('click', ()=> {
   dropdownMenu.style.display = dropdownMenu.style.display === 'flex' ? 'none' : 'flex';
-});
-const typingEl = document.getElementById('typing');
-const texts = ["Minecraft Plugin Developer", "Skript Expert", "Server Setup Master"];
-let index = 0;
-let charIndex = 0;
-let typing = true;
-function type(){
-  if(typing){
-    if(charIndex < texts[index].length){
-      typingEl.textContent += texts[index].charAt(charIndex);
-      charIndex++;
-      setTimeout(type,100);
-    } else {
-      typing = false;
-      setTimeout(type,1500);
-    }
-  } else {
-    if(charIndex > 0){
-      typingEl.textContent = texts[index].substring(0,charIndex-1);
-      charIndex--;
-      setTimeout(type,50);
-    } else {
-      typing = true;
-      index = (index +1)%texts.length;
-      setTimeout(type,500);
-    }
-  }
-}
-type();
-const sections = document.querySelectorAll('section');
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if(entry.isIntersecting){
-      entry.target.classList.add('show');
-    }
-  });
-},{threshold:0.2});
-sections.forEach(section => observer.observe(section));
-</script>
+});// Typing animation const typingEl = document.getElementById('typing'); const texts = ["Minecraft Plugin Developer", "Skript Expert", "Server Setup Master"]; let index = 0; let charIndex = 0; let typing = true; function type(){ if(typing){ if(charIndex < texts[index].length){ typingEl.textContent += texts[index].charAt(charIndex); charIndex++; setTimeout(type,100); } else { typing = false; setTimeout(type,1500); } } else { if(charIndex > 0){ typingEl.textContent = texts[index].substring(0,charIndex-1); charIndex--; setTimeout(type,50); } else { typing = true; index = (index +1)%texts.length; setTimeout(type,500); } } } type();
+
+// Scroll animation const sections = document.querySelectorAll('section'); const observer = new IntersectionObserver(entries => { entries.forEach(entry => { if(entry.isIntersecting){ entry.target.classList.add('show'); } }); },{threshold:0.2}); sections.forEach(section => observer.observe(section)); </script>
+
 </body>
 </html>
