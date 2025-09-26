@@ -13,7 +13,6 @@ body {
   background-size:cover;
   color:#1E90FF;
   overflow-x:hidden;
-  cursor:none; /* Hide default cursor for custom effect */
 }
 header {
   display:flex;
@@ -66,32 +65,49 @@ header h1 {
   font-weight:700;
 }
 #dropdownMenu a:hover { color:#1E3A8A; }
+
+/* ===== Sections & Smooth Scroll Anim ===== */
 section {
   padding:40px 5%;
   text-align:center;
   opacity:0;
-  transform:translateY(50px) rotateX(10deg);
-  transition:all .8s ease-out;
+  transform:translateY(60px) rotateX(15deg);
+  transition: all 1s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* smooth bounce */
   background:rgba(20,20,20,0.85);
   margin:20px auto;
   border-radius:15px;
   max-width:95vw;
   box-sizing:border-box;
 }
-section.show { opacity:1; transform:translateY(0) rotateX(0deg); }
+section.show {
+  opacity:1;
+  transform:translateY(0) rotateX(0deg);
+}
 h2 { font-size:1.8rem; margin-bottom:20px; color:#1E90FF; }
+
 .skills { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:15px; margin-top:20px; }
-.card { background:rgba(28,28,28,0.85); padding:15px; border-radius:10px; transition: transform 0.5s, background 0.3s, box-shadow 0.3s; }
-.card:hover { background:#222; transform: translateY(-10px) scale(1.03) rotateX(3deg); box-shadow:0 15px 30px rgba(30,144,255,0.6); }
+.card {
+  background:rgba(28,28,28,0.85);
+  padding:15px;
+  border-radius:10px;
+  transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55), 
+              background 0.3s, box-shadow 0.3s;
+}
+.card:hover {
+  background:#222;
+  transform: translateY(-10px) scale(1.03) rotateX(3deg);
+  box-shadow:0 15px 30px rgba(30,144,255,0.6);
+}
+
 .platform-btn { padding:10px 15px; border-radius:8px; background:#1E90FF; color:#fff; text-decoration:none; margin:5px; display:inline-block; transition:transform 0.3s, box-shadow 0.3s; }
 .platform-btn:hover { transform:translateY(-3px) scale(1.03); box-shadow:0 6px 15px rgba(30,144,255,0.6); }
+
 footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdrop-filter:blur(6px); }
+
 #hero { height:auto; min-height:80vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; background:rgba(0,0,0,0.55); margin-bottom:30px; max-width:95vw; }
 #hero h1 { font-size:2.5rem; color:#1E90FF; }
 #hero p { font-size:1.2rem; color:#1E90FF; }
 #scrollProgress { position:fixed; top:0; left:0; width:0; height:4px; background:#1E90FF; z-index:50; transition: width 0.25s ease; }
-.particle { position:absolute; width:15px; height:15px; background:#1E90FF; opacity:0.6; border-radius:3px; animation:float 10s linear infinite; }
-@keyframes float { 0%{transform:translateY(100vh) translateX(0) rotate(0deg);opacity:0.6;} 50%{opacity:0.3;} 100%{transform:translateY(-10vh) translateX(100px) rotate(360deg);opacity:0;} }
 
 /* ===== Stats Counters ===== */
 .counter {
@@ -100,19 +116,6 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
   display:block;
   color:#1E90FF;
   margin-bottom:5px;
-}
-
-/* ===== Cursor Glow ===== */
-#cursorGlow {
-  position:fixed;
-  top:0; left:0;
-  width:20px; height:20px;
-  background:rgba(30,144,255,0.7);
-  border-radius:50%;
-  pointer-events:none;
-  transform:translate(-50%,-50%);
-  box-shadow:0 0 20px rgba(30,144,255,0.9), 0 0 40px rgba(30,144,255,0.6);
-  z-index:1000;
 }
 
 @media(max-width:600px){ 
@@ -154,7 +157,6 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
   <div class="skills">
     <div class="card">Minecraft Server Setup</div>
     <div class="card">SMP Management</div>
-    <div class="card">Plugin Development</div>
     <div class="card">Discord Development</div>
     <div class="card">Java</div>
     <div class="card">Java Skript</div>
@@ -170,14 +172,13 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
   </p>
 </section>
 
-<!-- ===== Stats Section ===== -->
 <section id="statsMain">
   <h2>Achievements</h2>
   <div class="skills">
     <div class="card"><span class="counter" data-target="20">0</span>+ Plugins Created</div>
-    <div class="card"><span class="counter" data-target="5">0</span>+ Years Experience</div>
-    <div class="card"><span class="counter" data-target="300">0</span>+ Discord Members</div>
-    <div class="card"><span class="counter" data-target="50">0</span>+ Skripts Made</div>
+    <div class="card"><span class="counter" data-target="5">0</span>+ Months Experience</div>
+    <div class="card"><span class="counter" data-target="100">0</span>+ Discord Members</div>
+    <div class="card"><span class="counter" data-target="5">0</span>+ Skripts Made</div>
   </div>
 </section>
 
@@ -185,10 +186,8 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
   <p>© 2025 𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉 | All Rights Reserved</p>
 </footer>
 
-<!-- ===== Cursor Glow ===== -->
-<div id="cursorGlow"></div>
-
 <script>
+// ===== Navbar Toggle =====
 const navToggle = document.getElementById('navToggle');
 const dropdownMenu = document.getElementById('dropdownMenu');
 navToggle.addEventListener('click', ()=> {
@@ -214,7 +213,9 @@ const observer = new IntersectionObserver(entries => {
     if(entry.isIntersecting){
       entry.target.classList.add('show');
       const cards = entry.target.querySelectorAll('.card');
-      cards.forEach((card,i)=>{card.style.transitionDelay = `${i*0.1}s`;});
+      cards.forEach((card,i)=>{
+        card.style.transitionDelay = `${i*0.15}s`; // smooth stagger
+      });
     }
   });
 },{threshold:0.2});
@@ -231,8 +232,7 @@ window.addEventListener('scroll', () => {
 
 // ===== Counter Animation =====
 const counters = document.querySelectorAll('.counter');
-const speed = 200; // lower = faster
-
+const speed = 200;
 const animateCounters = (entries, observer) => {
   entries.forEach(entry => {
     if(entry.isIntersecting){
@@ -241,7 +241,6 @@ const animateCounters = (entries, observer) => {
         const target = +counter.getAttribute('data-target');
         const count = +counter.innerText;
         const increment = Math.ceil(target / speed);
-
         if(count < target){
           counter.innerText = count + increment;
           setTimeout(updateCount, 30);
@@ -254,16 +253,8 @@ const animateCounters = (entries, observer) => {
     }
   });
 };
-
 const counterObserver = new IntersectionObserver(animateCounters, { threshold: 0.5 });
 counters.forEach(counter => counterObserver.observe(counter));
-
-// ===== Cursor Glow Effect =====
-const cursorGlow = document.getElementById("cursorGlow");
-document.addEventListener("mousemove", e => {
-  cursorGlow.style.top = e.clientY + "px";
-  cursorGlow.style.left = e.clientX + "px";
-});
 </script>
 </body>
 </html>
