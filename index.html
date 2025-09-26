@@ -4,6 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <title>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</title>
 <style>
+/* ===== Body & general ===== */
 body {
   margin:0;
   font-family:Arial,sans-serif;
@@ -83,13 +84,17 @@ h2 { font-size:1.8rem; margin-bottom:20px; color:#1E90FF; }
 .platform-btn { padding:10px 15px; border-radius:8px; background:#1E90FF; color:#fff; text-decoration:none; margin:5px; display:inline-block; transition:transform 0.3s, box-shadow 0.3s; }
 .platform-btn:hover { transform:translateY(-3px) scale(1.03); box-shadow:0 6px 15px rgba(30,144,255,0.6); }
 footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdrop-filter:blur(6px); }
-#hero { height:auto; min-height:80vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; background:rgba(0,0,0,0.55); margin-bottom:30px; max-width:95vw; position:relative; overflow:hidden; }
+#hero { height:auto; min-height:80vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; background:rgba(0,0,0,0.55); margin-bottom:30px; max-width:95vw; }
 #hero h1 { font-size:2.5rem; color:#1E90FF; }
 #hero p { font-size:1.2rem; color:#1E90FF; }
+#scrollProgress { position:fixed; top:0; left:0; width:0; height:4px; background:#1E90FF; z-index:50; transition: width 0.25s ease; }
+.particle { position:absolute; width:15px; height:15px; background:#1E90FF; opacity:0.6; border-radius:3px; animation:float 10s linear infinite; }
+@keyframes float { 0%{transform:translateY(100vh) translateX(0) rotate(0deg);opacity:0.6;} 50%{opacity:0.3;} 100%{transform:translateY(-10vh) translateX(100px) rotate(360deg);opacity:0;} }
 @media(max-width:600px){ header h1{font-size:1rem;} .skills{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));} #dropdownMenu{top:60px;left:2%;right:2%;} section{padding:30px 3%;} #hero h1{font-size:2rem;} #hero p{font-size:1rem;} }
 </style>
 </head>
 <body>
+<div id="scrollProgress"></div>
 <header>
   <div class="nav-toggle" id="navToggle"><span></span><span></span><span></span></div>
   <h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
@@ -102,6 +107,7 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
 </div>
 <section id="hero">
   <h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
+  <p>Minecraft Plugin Developer & Skript Expert</p>
 </section>
 <section id="aboutMain">
   <h2>About Me</h2>
@@ -130,12 +136,34 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
   <p>© 2025 𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉 | All Rights Reserved</p>
 </footer>
 <script>
-// Hamburger menu
 const navToggle = document.getElementById('navToggle');
 const dropdownMenu = document.getElementById('dropdownMenu');
 navToggle.addEventListener('click', ()=> {
+  navToggle.classList.toggle('open');
   dropdownMenu.style.display = dropdownMenu.style.display === 'flex' ? 'none' : 'flex';
-});// Scroll animation const sections = document.querySelectorAll('section'); const observer = new IntersectionObserver(entries => { entries.forEach(entry => { if(entry.isIntersecting){ entry.target.classList.add('show'); } }); },{threshold:0.2}); sections.forEach(section => observer.observe(section)); </script>
-
+});
+dropdownMenu.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const targetId = a.getAttribute('href').substring(1);
+    const targetEl = document.getElementById(targetId);
+    if(targetEl){
+      targetEl.scrollIntoView({behavior:'smooth', block:'start'});
+      dropdownMenu.style.display = 'none';
+    }
+  });
+});
+const sections = document.querySelectorAll("section");
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('show');
+      const cards = entry.target.querySelectorAll('.card');
+      cards.forEach((card,i)=>{card.style.transitionDelay = `${i*0.1}s`;});
+    }
+  });
+},{threshold:0.2});
+sections.forEach(section => observer.observe(section));
+</script>
 </body>
 </html>
