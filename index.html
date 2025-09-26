@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</title>
 <style>
-/* Reset & Basics */
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Arial',sans-serif;}
-body{background:#0b0b0f;color:#a3c9f1;overflow-x:hidden;position:relative;}
+/* Basics & reset */
+*{margin:0;padding:0;box-sizing:border-box;user-select:none;}
+body{font-family:'Arial',sans-serif;background:#0b0b0f;color:#a3c9f1;overflow-x:hidden;position:relative;}
 a{text-decoration:none;color:#a3c9f1;transition:0.3s;}
 a:hover{color:#9b59b6;}
-::selection{background:transparent;}
+::selection{background:transparent;} /* Disable blue selection highlight */
 
 /* Header */
 header{position:fixed;top:0;width:100%;padding:15px 5%;display:flex;justify-content:space-between;align-items:center;background:rgba(15,15,20,0.85);backdrop-filter:blur(5px);z-index:100;}
@@ -37,7 +37,7 @@ h2{font-size:2rem;color:#a3c9f1;margin-bottom:20px;text-shadow:0 0 5px #a3c9f1;}
 .card::after{content:"";position:absolute;width:100%;height:100%;top:0;left:-100%;background:rgba(163,201,241,0.05);transform:skewX(-20deg);transition:all 0.7s ease;}
 .card:hover::after{left:100%;}
 .card:hover{transform:translateY(-8px) scale(1.03);box-shadow:0 0 20px rgba(163,201,241,0.5);}
-.card:active{background:rgba(25,25,40,0.85);}
+.card:active{background:rgba(25,25,40,0.85);} /* Prevent click highlight */
 
 /* Counter cards */
 .counter-container span.icon{font-size:2rem;margin-bottom:10px;opacity:0;transform:scale(0.5);transition:all 0.6s ease-out;text-shadow:0 0 5px #a3c9f1;}
@@ -58,29 +58,24 @@ footer{padding:25px;text-align:center;background:rgba(15,15,20,0.85);backdrop-fi
 /* Scroll progress */
 #scrollProgress{position:fixed;top:0;left:0;width:0;height:4px;background:#9b59b6;z-index:200;transition:width 0.25s ease;}
 
-/* Editable outline for admin */
-.editable-outline{outline:2px dashed #9b59b6;}
+/* Particle background */
+#particles-js{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
+canvas{display:block;}
 
-/* Modals */
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,0.75);z-index:300;}
-.modal-content{background:#111;color:#a3c9f1;padding:25px;border-radius:15px;width:90%;max-width:400px;text-align:center;}
-.modal input{width:80%;padding:10px;margin:10px 0;border-radius:8px;border:none;background:#222;color:#a3c9f1;}
-.modal button{padding:10px 20px;margin:10px;background:#9b59b6;color:#fff;border:none;border-radius:8px;cursor:pointer;transition:0.3s;}
-.modal button:hover{background:#a3c9f1;color:#111;}
+/* Mobile */
+@media(max-width:600px){header h1{font-size:1.2rem;}section{padding:50px 3%;}#hero h1{font-size:2rem;}#hero p{font-size:1rem;}.skills{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));}#dropdownMenu{left:2%;right:2%;}}
 </style>
 </head>
 <body>
 
 <audio id="clickSound" src="https://freesound.org/data/previews/170/170186_2437358-lq.mp3"></audio>
+
+<div id="particles-js"></div>
 <div id="scrollProgress"></div>
 
 <header>
 <div class="nav-toggle" id="navToggle"><span></span><span></span><span></span></div>
 <h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
-<button id="btnLoginOpen">Login</button>
-<button id="btnRegisterOpen">Register</button>
-<button id="btnLogout" style="display:none;">Logout</button>
-<button id="btnSaveGit" style="display:none;">Save Changes</button>
 </header>
 
 <div id="dropdownMenu">
@@ -91,17 +86,17 @@ footer{padding:25px;text-align:center;background:rgba(15,15,20,0.85);backdrop-fi
 <a href="#statsMain">Achievements</a>
 </div>
 
-<section id="hero" class="maybe-edit">
+<section id="hero">
 <h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
 <p>Subtle & Classy Minecraft Skript Developer</p>
 </section>
 
-<section id="aboutMain" class="maybe-edit">
+<section id="aboutMain">
 <h2>About Me</h2>
 <p>I create high-quality, dark-mode Minecraft skripts with refined UI, custom mechanics, and smooth server experiences.</p>
 </section>
 
-<section id="skillsMain" class="maybe-edit">
+<section id="skillsMain">
 <h2>What I Know</h2>
 <div class="skills">
 <div class="card">Minecraft Server Setup</div>
@@ -113,7 +108,7 @@ footer{padding:25px;text-align:center;background:rgba(15,15,20,0.85);backdrop-fi
 </div>
 </section>
 
-<section id="platforms" class="maybe-edit">
+<section id="platforms">
 <h2>My Platforms</h2>
 <p>
 <a href="https://discord.gg/4RrCaXR9C7" target="_blank" class="platform-btn">💬 Discord</a>
@@ -121,7 +116,7 @@ footer{padding:25px;text-align:center;background:rgba(15,15,20,0.85);backdrop-fi
 </p>
 </section>
 
-<section id="statsMain" class="maybe-edit">
+<section id="statsMain">
 <h2>Achievements</h2>
 <div class="skills">
 <div class="card counter-container">
@@ -139,118 +134,33 @@ footer{padding:25px;text-align:center;background:rgba(15,15,20,0.85);backdrop-fi
 </div>
 </section>
 
-<footer class="maybe-edit">
+<footer>
 <p>© 2025 𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉 | All Rights Reserved</p>
 </footer>
 
-<!-- Login/Register Modal -->
-<div class="modal" id="modalLogin">
-<div class="modal-content">
-<h2>Login</h2>
-<input type="email" id="loginEmail" placeholder="Email"><br>
-<button id="loginSubmit">Login</button>
-<button onclick="closeModal('modalLogin')">Cancel</button>
-</div>
-</div>
-
-<div class="modal" id="modalRegister">
-<div class="modal-content">
-<h2>Register</h2>
-<input type="email" id="registerEmail" placeholder="Email"><br>
-<button id="registerSubmit">Register</button>
-<button onclick="closeModal('modalRegister')">Cancel</button>
-</div>
-</div>
-
 <!-- JS -->
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
-const ADMIN_EMAIL = "srahemat943@gmail.com";
-const navToggle=document.getElementById('navToggle');
-const dropdownMenu=document.getElementById('dropdownMenu');
-const clickSound=document.getElementById('clickSound');
-const btnLoginOpen=document.getElementById('btnLoginOpen');
-const btnRegisterOpen=document.getElementById('btnRegisterOpen');
-const btnLogout=document.getElementById('btnLogout');
-const btnSaveGit=document.getElementById('btnSaveGit');
-
-/* Utility functions */
-function playClick(){clickSound.currentTime=0;clickSound.play();}
-function openModal(id){document.getElementById(id).style.display='flex';}
-function closeModal(id){document.getElementById(id).style.display='none';}
-
-/* LocalStorage auth */
-function getUsers(){return JSON.parse(localStorage.getItem('users')||'[]');}
-function saveUsers(users){localStorage.setItem('users',JSON.stringify(users));}
-function getCurrentUser(){return localStorage.getItem('currentUser');}
-function setCurrentUser(email){localStorage.setItem('currentUser',email);}
-function logoutUser(){localStorage.removeItem('currentUser');}
-
-/* Update UI based on auth */
-function updateAuthUI(){
-  const cur = getCurrentUser();
-  const users = getUsers();
-  const currentUser = users.find(u => u.email === cur);
-
-  // hide edit/save by default
-  btnSaveGit.style.display='none';
-  document.querySelectorAll('.maybe-edit').forEach(el=>{
-    el.setAttribute('contenteditable','false');
-    el.classList.remove('editable-outline');
-  });
-
-  if(cur && currentUser){
-    btnLoginOpen.style.display='none';
-    btnRegisterOpen.style.display='none';
-    btnLogout.style.display='inline-block';
-
-    if(currentUser.email === ADMIN_EMAIL){
-      btnSaveGit.style.display='inline-block';
-      document.querySelectorAll('.maybe-edit').forEach(el=>{
-        el.setAttribute('contenteditable','true');
-        el.classList.add('editable-outline');
-      });
-    }
-  } else {
-    btnLoginOpen.style.display='inline-block';
-    btnRegisterOpen.style.display='inline-block';
-    btnLogout.style.display='none';
-  }
-}
-
-/* Login/Register Events */
-btnLoginOpen.addEventListener('click',()=>openModal('modalLogin'));
-btnRegisterOpen.addEventListener('click',()=>openModal('modalRegister'));
-document.getElementById('loginSubmit').addEventListener('click',()=>{
-  const email = document.getElementById('loginEmail').value.trim();
-  if(!email){alert("Enter email"); return;}
-  const users = getUsers();
-  if(!users.find(u=>u.email===email)){alert("Email not registered"); return;}
-  setCurrentUser(email);
-  updateAuthUI();
-  closeModal('modalLogin');
-});
-document.getElementById('registerSubmit').addEventListener('click',()=>{
-  const email = document.getElementById('registerEmail').value.trim();
-  if(!email){alert("Enter email"); return;}
-  const users = getUsers();
-  if(users.find(u=>u.email===email)){alert("Email already registered"); return;}
-  users.push({email});
-  saveUsers(users);
-  setCurrentUser(email);
-  updateAuthUI();
-  closeModal('modalRegister');
-});
-btnLogout.addEventListener('click',()=>{
-  logoutUser();
-  updateAuthUI();
-});
-
-/* Save button for admin */
-btnSaveGit.addEventListener('click',()=>{
-  alert("Admin changes saved! (This can be linked to GitHub API in real use)");
+/* Particle Background */
+particlesJS("particles-js", {
+  "particles": {
+    "number": {"value":60,"density":{"enable":true,"value_area":800}},
+    "color":{"value":"#a3c9f1"},
+    "shape":{"type":"circle"},
+    "opacity":{"value":0.2,"random":true},
+    "size":{"value":3,"random":true},
+    "line_linked":{"enable":true,"distance":150,"color":"#a3c9f1","opacity":0.1,"width":1},
+    "move":{"enable":true,"speed":1,"direction":"none","random":true,"straight":false,"out_mode":"out","bounce":false}
+  },
+  "interactivity":{"detect_on":"canvas","events":{"onhover":{"enable":true,"mode":"repulse"}}},
+  "retina_detect":true
 });
 
 /* Menu toggle */
+const navToggle=document.getElementById('navToggle');
+const dropdownMenu=document.getElementById('dropdownMenu');
+const clickSound=document.getElementById('clickSound');
+function playClick(){clickSound.currentTime=0;clickSound.play();}
 navToggle.addEventListener('click',()=>{
   navToggle.classList.toggle('open');
   dropdownMenu.style.display=dropdownMenu.style.display==='flex'?'none':'flex';
@@ -302,9 +212,7 @@ window.addEventListener('scroll',()=>{
   const height=document.documentElement.scrollHeight-document.documentElement.clientHeight;
   document.getElementById('scrollProgress').style.width=((winScroll/height)*100)+'%';
 });
-
-/* Initial UI */
-updateAuthUI();
 </script>
+
 </body>
 </html>
