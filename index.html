@@ -1,169 +1,169 @@
-<!DOCTYPE html><html lang="en">
+// server.js
+const express = require("express");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
+
+const app = express();
+
+// ==== CONFIG ====
+const UPLOAD_DIR = path.join(__dirname, "uploads");
+if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR);
+
+const ADMIN_PASS = "Ninja786"; // ⚠️ Simple password
+
+// Allowed extensions (NO images/videos)
+const ALLOWED_EXT = new Set([
+  ".zip", ".jar", ".sk", ".txt", ".json",
+  ".yml", ".yaml", ".mcpack", ".mcmeta",
+  ".rar", ".7z", ".phar"
+]);
+
+// ==== MULTER STORAGE ====
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, UPLOAD_DIR),
+  filename: (req, file, cb) => {
+    const safe = file.originalname.replace(/\s+/g, "_");
+    cb(null, Date.now() + "-" + safe);
+  }
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
+  fileFilter: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (!ALLOWED_EXT.has(ext)) return cb(new Error("File type not allowed"));
+    if (file.mimetype.startsWith("image/") || file.mimetype.startsWith("video/")) {
+      return cb(new Error("Images/videos not allowed"));
+    }
+    cb(null, true);
+  }
+}).single("file");
+
+// ==== ROUTES ====
+
+// Serve uploads
+app.use("/uploads", express.static(UPLOAD_DIR));
+
+// List files
+app.get("/files", (req, res) => {
+  fs.readdir(UPLOAD_DIR, (err, files) => {
+    if (err) return res.json([]);
+    const list = files.map(fn => {
+      const stat = fs.statSync(path.join(UPLOAD_DIR, fn));
+      return {
+        name: fn.split("-").slice(1).join("-") || fn,
+        url: "/uploads/" + encodeURIComponent(fn),
+        uploadedAt: stat.mtimeMs
+      };
+    }).sort((a, b) => b.uploadedAt - a.uploadedAt);
+    res.json(list);
+  });
+});
+
+// Upload endpoint
+app.post("/upload", (req, res) => {
+  upload(req, res, err => {
+    if (err) return res.status(400).json({ success: false, message: err.message });
+    if (req.body.adminPass !== ADMIN_PASS) {
+      if (req.file) fs.unlink(req.file.path, () => {});
+      return res.status(401).json({ success: false, message: "Wrong password" });
+    }
+    if (!req.file) return res.status(400).json({ success: false, message: "No file" });
+    res.json({ success: true });
+  });
+});
+
+// ==== FRONTEND HTML ====
+app.get("/", (req, res) => {
+  res.send(`
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<title>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>𝙽𝙸𝙽𝙹𝙰𝙂𝙰𝙼𝙴𝚁𝚉</title>
 <style>
-/* ===== Body & general ===== */
-body {
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#000 url('https://images.unsplash.com/photo-1601758123927-3f0cb77a5f40?fit=crop&w=1920&q=80') no-repeat center center fixed;
-  background-size:cover;
-  color:#1E90FF;
-  overflow-x:hidden;
-}
-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  padding:10px 5%;
-  background:rgba(17,17,17,0.85);
-  position:sticky;
-  top:0;
-  z-index:10;
-  backdrop-filter:blur(6px);
-}
-.nav-toggle {
-  cursor:pointer;
-  width:30px; height:25px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  position:fixed; top:20px; left:20px; z-index:25;
-}
-.nav-toggle span {
-  display:block;
-  height:3px;
-  background:#1E90FF;
-  border-radius:2px;
-}
-header h1 {
-  margin:0;
-  position:fixed;
-  top:10px;
-  right:5%;
-  padding:10px 15px;
-  background:rgba(34,34,34,0.85);
-  border-radius:10px;
-  font-size:1.1rem;
-}
-#dropdownMenu {
-  position:fixed; top:60px; left:5%; right:5%;
-  background:rgba(28,28,28,0.95);
-  padding:10px 20px;
-  border-radius:8px;
-  display:none;
-  flex-direction:column;
-  z-index:20;
-}
-#dropdownMenu a {
-  color:#1E90FF;
-  text-decoration:none;
-  margin:5px 0;
-  font-weight:700;
-}
-#dropdownMenu a:hover { color:#1E3A8A; }
-section {
-  padding:40px 5%;
-  text-align:center;
-  opacity:0;
-  transform:translateY(50px) rotateX(10deg);
-  transition:all .8s ease-out;
-  background:rgba(20,20,20,0.85);
-  margin:20px auto;
-  border-radius:15px;
-  max-width:95vw;
-  box-sizing:border-box;
-}
-section.show { opacity:1; transform:translateY(0) rotateX(0deg); }
-h2 { font-size:1.8rem; margin-bottom:20px; color:#1E90FF; }
-.skills { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:15px; margin-top:20px; }
-.card { background:rgba(28,28,28,0.85); padding:15px; border-radius:10px; transition: transform 0.5s, background 0.3s, box-shadow 0.3s; }
-.card:hover { background:#222; transform: translateY(-10px) scale(1.03) rotateX(3deg); box-shadow:0 15px 30px rgba(30,144,255,0.6); }
-.platform-btn { padding:10px 15px; border-radius:8px; background:#1E90FF; color:#fff; text-decoration:none; margin:5px; display:inline-block; transition:transform 0.3s, box-shadow 0.3s; }
-.platform-btn:hover { transform:translateY(-3px) scale(1.03); box-shadow:0 6px 15px rgba(30,144,255,0.6); }
-footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdrop-filter:blur(6px); }
-#hero { height:auto; min-height:80vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; background:rgba(0,0,0,0.55); margin-bottom:30px; max-width:95vw; }
-#hero h1 { font-size:2.5rem; color:#1E90FF; }
-#hero p { font-size:1.2rem; color:#1E90FF; }
-#scrollProgress { position:fixed; top:0; left:0; width:0; height:4px; background:#1E90FF; z-index:50; transition: width 0.25s ease; }
-.particle { position:absolute; width:15px; height:15px; background:#1E90FF; opacity:0.6; border-radius:3px; animation:float 10s linear infinite; }
-@keyframes float { 0%{transform:translateY(100vh) translateX(0) rotate(0deg);opacity:0.6;} 50%{opacity:0.3;} 100%{transform:translateY(-10vh) translateX(100px) rotate(360deg);opacity:0;} }
-@media(max-width:600px){ header h1{font-size:1rem;} .skills{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));} #dropdownMenu{top:60px;left:2%;right:2%;} section{padding:30px 3%;} #hero h1{font-size:2rem;} #hero p{font-size:1rem;} }
+body{margin:0;font-family:Arial,sans-serif;background:#000;color:#1E90FF;text-align:center;}
+header{padding:15px;background:#111;position:sticky;top:0;z-index:10;}
+h1{margin:0;font-size:2rem;}
+section{padding:30px;margin:20px auto;max-width:900px;background:rgba(20,20,20,.85);border-radius:12px;}
+.card{background:#222;padding:12px;border-radius:8px;margin:10px;}
+.platform-btn{padding:8px 12px;border-radius:8px;background:#1E90FF;color:#fff;text-decoration:none;display:inline-block;}
+#adminModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);justify-content:center;align-items:center;z-index:20;}
+#adminModal .box{background:#111;padding:20px;border-radius:10px;width:90%;max-width:400px;}
 </style>
 </head>
 <body>
-<div id="scrollProgress"></div>
-<header>
-  <div class="nav-toggle" id="navToggle"><span></span><span></span><span></span></div>
-  <h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
-</header>
-<div id="dropdownMenu">
-  <a href="#hero">Home</a>
-  <a href="#aboutMain">About</a>
-  <a href="#skillsMain">Skills</a>
-  <a href="#platforms">Platforms</a>
-</div>
-<section id="hero">
-  <h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
-  <p>Minecraft Plugin Developer & Skript Expert</p>
+<header><h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1></header>
+
+<section id="freeStuff">
+  <h2>Free Stuff</h2>
+  <div id="freeList">Loading...</div>
+  <p><button id="openAdminBtn" class="platform-btn">Admin Upload</button></p>
 </section>
-<section id="aboutMain">
-  <h2>About Me</h2>
-  <p>I build high-quality plugins for Minecraft servers. Custom weapons, animated systems, and more.</p>
-</section>
-<section id="skillsMain">
-  <h2>What I Know</h2>
-  <div class="skills">
-    <div class="card">Minecraft Server Setup</div>
-    <div class="card">SMP Management</div>
-    <div class="card">Plugin Development</div>
-    <div class="card">Discord Development</div>
-    <div class="card">Java</div>
-    <div class="card">Java Skript</div>
-    <div class="card">Skript Maker</div>
+
+<div id="adminModal">
+  <div class="box">
+    <h3>Admin Upload</h3>
+    <form id="uploadForm">
+      <input type="password" id="adminPass" placeholder="Password" required style="width:100%;margin:6px 0;padding:6px;" />
+      <input type="file" id="fileInput" required style="width:100%;margin:6px 0;" />
+      <p><button type="submit" class="platform-btn">Upload</button>
+         <button type="button" id="closeAdmin" class="platform-btn" style="background:#444;">Cancel</button></p>
+      <p id="uploadMsg"></p>
+    </form>
   </div>
-</section>
-<section id="platforms">
-  <h2>My Platforms</h2>
-  <p>
-    <a href="https://discord.gg/4RrCaXR9C7" target="_blank" class="platform-btn">💬 Discord</a>
-    <a href="https://youtube.com/@ninja_gamerz2692" target="_blank" class="platform-btn">▶️ YouTube</a>
-  </p>
-</section>
-<footer>
-  <p>© 2025 𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉 | All Rights Reserved</p>
-</footer>
+</div>
+
 <script>
-const navToggle = document.getElementById('navToggle');
-const dropdownMenu = document.getElementById('dropdownMenu');
-navToggle.addEventListener('click', ()=> {
-  navToggle.classList.toggle('open');
-  dropdownMenu.style.display = dropdownMenu.style.display === 'flex' ? 'none' : 'flex';
-});
-dropdownMenu.querySelectorAll('a').forEach(a => {
-  a.addEventListener('click', e => {
-    e.preventDefault();
-    const targetId = a.getAttribute('href').substring(1);
-    const targetEl = document.getElementById(targetId);
-    if(targetEl){
-      targetEl.scrollIntoView({behavior:'smooth', block:'start'});
-      dropdownMenu.style.display = 'none';
-    }
-  });
-});
-const sections = document.querySelectorAll("section");
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if(entry.isIntersecting){
-      entry.target.classList.add('show');
-      const cards = entry.target.querySelectorAll('.card');
-      cards.forEach((card,i)=>{card.style.transitionDelay = `${i*0.1}s`;});
-    }
-  });
-},{threshold:0.2});
-sections.forEach(section => observer.observe(section));
+async function loadFiles(){
+  const list=document.getElementById("freeList");
+  list.innerHTML="Loading...";
+  try{
+    const res=await fetch("/files");
+    const files=await res.json();
+    if(!files.length){list.innerHTML="<div class='card'>No files yet.</div>";return;}
+    list.innerHTML="";
+    files.forEach(f=>{
+      const div=document.createElement("div");
+      div.className="card";
+      div.innerHTML=\`<h4>\${f.name}</h4>
+      <a href="\${f.url}" download class="platform-btn">⬇️ Download</a>\`;
+      list.appendChild(div);
+    });
+  }catch{list.innerHTML="Error loading files";}
+}
+loadFiles();
+
+document.getElementById("openAdminBtn").onclick=()=>document.getElementById("adminModal").style.display="flex";
+document.getElementById("closeAdmin").onclick=()=>{document.getElementById("adminModal").style.display="none";};
+
+document.getElementById("uploadForm").onsubmit=async e=>{
+  e.preventDefault();
+  const msg=document.getElementById("uploadMsg");
+  msg.textContent="Uploading...";
+  const fd=new FormData();
+  fd.append("adminPass",document.getElementById("adminPass").value);
+  fd.append("file",document.getElementById("fileInput").files[0]);
+  try{
+    const res=await fetch("/upload",{method:"POST",body:fd});
+    const data=await res.json();
+    if(res.ok){
+      msg.textContent="Upload successful!";
+      await loadFiles();
+      setTimeout(()=>document.getElementById("adminModal").style.display="none",800);
+    }else msg.textContent=data.message;
+  }catch{msg.textContent="Upload failed";}
+};
 </script>
+
 </body>
 </html>
+  `);
+});
+
+// ==== START ====
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, ()=> console.log("Running on http://localhost:"+PORT));
