@@ -84,14 +84,16 @@ section.show {
 h2 { font-size:1.8rem; margin-bottom:20px; color:#1E90FF; }
 
 .skills { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:15px; margin-top:20px; }
+
 .card {
   background:rgba(28,28,28,0.85);
-  padding:15px;
-  border-radius:10px;
-  transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55), 
-              background 0.3s, box-shadow 0.3s;
+  padding:20px;
+  border-radius:12px;
+  transition: transform 0.6s ease, background 0.3s, box-shadow 0.3s;
   position:relative;
   overflow:hidden;
+  cursor:pointer;
+  perspective:1000px;
 }
 .card::after {
   content:"";
@@ -106,8 +108,21 @@ h2 { font-size:1.8rem; margin-bottom:20px; color:#1E90FF; }
 .card:hover::after { left:100%; }
 .card:hover {
   background:#222;
-  transform: translateY(-10px) scale(1.03) rotateX(3deg);
-  box-shadow:0 15px 30px rgba(30,144,255,0.6);
+  transform: translateY(-12px) scale(1.05) rotateX(5deg);
+  box-shadow:0 20px 35px rgba(30,144,255,0.6);
+}
+
+/* Icon pop animation for counters */
+.counter-container {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+.counter-container span.icon {
+  font-size:2rem; margin-bottom:5px; opacity:0; transform:scale(0.5);
+  transition: all 0.6s ease-out;
+}
+.counter-container.show span.icon {
+  opacity:1;
+  transform:scale(1.2);
 }
 
 .platform-btn { padding:10px 15px; border-radius:8px; background:#1E90FF; color:#fff; text-decoration:none; margin:5px; display:inline-block; transition:transform 0.3s, box-shadow 0.3s; }
@@ -153,41 +168,41 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
 <div id="scrollProgress"></div>
 <header>
   <div class="nav-toggle" id="navToggle"><span></span><span></span><span></span></div>
-  <h1 data-en="𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉" data-hi="𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉">𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
+  <h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
 </header>
 
 <div id="dropdownMenu">
-  <a href="#hero" data-en="Home" data-hi="मुख्य पृष्ठ">Home</a>
-  <a href="#aboutMain" data-en="About" data-hi="मेरे बारे में">About</a>
-  <a href="#skillsMain" data-en="Skills" data-hi="कौशल">Skills</a>
-  <a href="#platforms" data-en="Platforms" data-hi="प्लेटफ़ॉर्म">Platforms</a>
-  <a href="#statsMain" data-en="Achievements" data-hi="उपलब्धियां">Achievements</a>
+  <a href="#hero">Home</a>
+  <a href="#aboutMain">About</a>
+  <a href="#skillsMain">Skills</a>
+  <a href="#platforms">Platforms</a>
+  <a href="#statsMain">Achievements</a>
 </div>
 
 <section id="hero">
-  <h1 data-en="𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉" data-hi="𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉">𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
-  <p data-en="Minecraft Plugin Developer & Skript Expert" data-hi="Minecraft प्लगइन डेवलपर और Skript एक्सपर्ट">Minecraft Plugin Developer & Skript Expert</p>
+  <h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
+  <p>Minecraft Plugin Developer & Skript Expert</p>
 </section>
 
 <section id="aboutMain">
-  <h2 data-en="About Me" data-hi="मेरे बारे में">About Me</h2>
-  <p data-en="I build high-quality plugins for Minecraft servers. Custom weapons, animated systems, and more." data-hi="मैं Minecraft सर्वरों के लिए उच्च-गुणवत्ता वाले प्लगइन्स बनाता हूँ। कस्टम हथियार, एनीमेटेड सिस्टम और बहुत कुछ।">I build high-quality plugins for Minecraft servers. Custom weapons, animated systems, and more.</p>
+  <h2>About Me</h2>
+  <p>I build high-quality plugins for Minecraft servers. Custom weapons, animated systems, and more.</p>
 </section>
 
 <section id="skillsMain">
-  <h2 data-en="What I Know" data-hi="मैं क्या जानता हूँ">What I Know</h2>
+  <h2>What I Know</h2>
   <div class="skills">
-    <div class="card" data-en="Minecraft Server Setup" data-hi="Minecraft सर्वर सेटअप">Minecraft Server Setup</div>
-    <div class="card" data-en="SMP Management" data-hi="SMP प्रबंधन">SMP Management</div>
-    <div class="card" data-en="Discord Development" data-hi="Discord डेवलपमेंट">Discord Development</div>
-    <div class="card" data-en="Java" data-hi="Java">Java</div>
-    <div class="card" data-en="Java Skript" data-hi="Java Skript">Java Skript</div>
-    <div class="card" data-en="Skript Maker" data-hi="Skript मेकर">Skript Maker</div>
+    <div class="card">Minecraft Server Setup</div>
+    <div class="card">SMP Management</div>
+    <div class="card">Discord Development</div>
+    <div class="card">Java</div>
+    <div class="card">Java Skript</div>
+    <div class="card">Skript Maker</div>
   </div>
 </section>
 
 <section id="platforms">
-  <h2 data-en="My Platforms" data-hi="मेरे प्लेटफ़ॉर्म">My Platforms</h2>
+  <h2>My Platforms</h2>
   <p>
     <a href="https://discord.gg/4RrCaXR9C7" target="_blank" class="platform-btn">💬 Discord</a>
     <a href="https://youtube.com/@ninja_gamerz2692" target="_blank" class="platform-btn">▶️ YouTube</a>
@@ -195,19 +210,29 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
 </section>
 
 <section id="statsMain">
-  <h2 data-en="Achievements" data-hi="उपलब्धियां">Achievements</h2>
+  <h2>Achievements</h2>
   <div class="skills">
-    <div class="card"><span class="counter" data-target="5">0</span>+ <span data-en="Months Experience" data-hi="महीनों का अनुभव">Months Experience</span></div>
-    <div class="card"><span class="counter" data-target="100">0</span>+ <span data-en="Discord Members" data-hi="Discord सदस्य">Discord Members</span></div>
-    <div class="card"><span class="counter" data-target="5">0</span>+ <span data-en="Skripts Made" data-hi="Skripts बनाए गए">Skripts Made</span></div>
+    <div class="card counter-container">
+      <span class="icon">🕒</span>
+      <span class="counter" data-target="5">0</span>+ 
+      <span>Months Experience</span>
+    </div>
+    <div class="card counter-container">
+      <span class="icon">💬</span>
+      <span class="counter" data-target="100">0</span>+ 
+      <span>Discord Members</span>
+    </div>
+    <div class="card counter-container">
+      <span class="icon">📝</span>
+      <span class="counter" data-target="5">0</span>+ 
+      <span>Skripts Made</span>
+    </div>
   </div>
 </section>
 
 <footer>
   <p>© 2025 𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉 | All Rights Reserved</p>
 </footer>
-
-<button class="lang-btn" id="langBtn">हिंदी</button>
 
 <script>
 // Navbar Toggle
@@ -236,7 +261,12 @@ const observer = new IntersectionObserver(entries => {
     if(entry.isIntersecting){
       entry.target.classList.add('show');
       const cards = entry.target.querySelectorAll('.card');
-      cards.forEach((card,i)=>{card.style.transitionDelay = `${i*0.1}s`;});
+      cards.forEach((card,i)=>{
+        card.style.transitionDelay = `${i*0.1}s`;
+        if(card.classList.contains('counter-container')){
+          card.classList.add('show'); 
+        }
+      });
     }
   });
 },{threshold:0.2});
@@ -257,17 +287,6 @@ counters.forEach(counter=>{
     }
   };
   updateCount();
-});
-
-// Language Toggle
-const langBtn = document.getElementById('langBtn');
-let lang = 'hi';
-langBtn.addEventListener('click', ()=>{
-  lang = lang==='hi'?'en':'hi';
-  document.querySelectorAll('[data-en]').forEach(el=>{
-    el.innerText = el.getAttribute(`data-${lang}`);
-  });
-  langBtn.innerText = lang==='hi'?'English':'हिंदी';
 });
 </script>
 </body>
