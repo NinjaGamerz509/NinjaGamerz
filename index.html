@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <title>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</title>
 <style>
-/* ===== Body & general ===== */
 body {
   margin:0;
   font-family:Arial,sans-serif;
@@ -66,13 +65,12 @@ header h1 {
 }
 #dropdownMenu a:hover { color:#1E3A8A; }
 
-/* ===== Sections & Smooth Scroll Anim ===== */
 section {
   padding:40px 5%;
   text-align:center;
   opacity:0;
   transform:translateY(60px) rotateX(15deg);
-  transition: all 1s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* smooth bounce */
+  transition: all 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
   background:rgba(20,20,20,0.85);
   margin:20px auto;
   border-radius:15px;
@@ -92,7 +90,20 @@ h2 { font-size:1.8rem; margin-bottom:20px; color:#1E90FF; }
   border-radius:10px;
   transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55), 
               background 0.3s, box-shadow 0.3s;
+  position:relative;
+  overflow:hidden;
 }
+.card::after {
+  content:"";
+  position:absolute;
+  width:100%;
+  height:100%;
+  top:0; left:-100%;
+  background:rgba(30,144,255,0.2);
+  transform:skewX(-20deg);
+  transition: all 0.7s ease;
+}
+.card:hover::after { left:100%; }
 .card:hover {
   background:#222;
   transform: translateY(-10px) scale(1.03) rotateX(3deg);
@@ -107,16 +118,26 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
 #hero { height:auto; min-height:80vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; background:rgba(0,0,0,0.55); margin-bottom:30px; max-width:95vw; }
 #hero h1 { font-size:2.5rem; color:#1E90FF; }
 #hero p { font-size:1.2rem; color:#1E90FF; }
+
 #scrollProgress { position:fixed; top:0; left:0; width:0; height:4px; background:#1E90FF; z-index:50; transition: width 0.25s ease; }
 
-/* ===== Stats Counters ===== */
-.counter {
-  font-size:2rem;
+.counter { font-size:2rem; font-weight:bold; display:block; color:#1E90FF; margin-bottom:5px; }
+
+.lang-btn {
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  padding:10px 15px;
+  background:#1E90FF;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  z-index:30;
   font-weight:bold;
-  display:block;
-  color:#1E90FF;
-  margin-bottom:5px;
+  transition:0.3s;
 }
+.lang-btn:hover { background:#1C86EE; }
 
 @media(max-width:600px){ 
   header h1{font-size:1rem;} 
@@ -132,40 +153,41 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
 <div id="scrollProgress"></div>
 <header>
   <div class="nav-toggle" id="navToggle"><span></span><span></span><span></span></div>
-  <h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
+  <h1 data-en="𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉" data-hi="𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉">𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
 </header>
+
 <div id="dropdownMenu">
-  <a href="#hero">Home</a>
-  <a href="#aboutMain">About</a>
-  <a href="#skillsMain">Skills</a>
-  <a href="#platforms">Platforms</a>
-  <a href="#statsMain">Achievements</a>
+  <a href="#hero" data-en="Home" data-hi="मुख्य पृष्ठ">Home</a>
+  <a href="#aboutMain" data-en="About" data-hi="मेरे बारे में">About</a>
+  <a href="#skillsMain" data-en="Skills" data-hi="कौशल">Skills</a>
+  <a href="#platforms" data-en="Platforms" data-hi="प्लेटफ़ॉर्म">Platforms</a>
+  <a href="#statsMain" data-en="Achievements" data-hi="उपलब्धियां">Achievements</a>
 </div>
 
 <section id="hero">
-  <h1>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
-  <p>Minecraft Plugin Developer & Skript Expert</p>
+  <h1 data-en="𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉" data-hi="𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉">𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</h1>
+  <p data-en="Minecraft Plugin Developer & Skript Expert" data-hi="Minecraft प्लगइन डेवलपर और Skript एक्सपर्ट">Minecraft Plugin Developer & Skript Expert</p>
 </section>
 
 <section id="aboutMain">
-  <h2>About Me</h2>
-  <p>I build high-quality plugins for Minecraft servers. Custom weapons, animated systems, and more.</p>
+  <h2 data-en="About Me" data-hi="मेरे बारे में">About Me</h2>
+  <p data-en="I build high-quality plugins for Minecraft servers. Custom weapons, animated systems, and more." data-hi="मैं Minecraft सर्वरों के लिए उच्च-गुणवत्ता वाले प्लगइन्स बनाता हूँ। कस्टम हथियार, एनीमेटेड सिस्टम और बहुत कुछ।">I build high-quality plugins for Minecraft servers. Custom weapons, animated systems, and more.</p>
 </section>
 
 <section id="skillsMain">
-  <h2>What I Know</h2>
+  <h2 data-en="What I Know" data-hi="मैं क्या जानता हूँ">What I Know</h2>
   <div class="skills">
-    <div class="card">Minecraft Server Setup</div>
-    <div class="card">SMP Management</div>
-    <div class="card">Discord Development</div>
-    <div class="card">Java</div>
-    <div class="card">Java Skript</div>
-    <div class="card">Skript Maker</div>
+    <div class="card" data-en="Minecraft Server Setup" data-hi="Minecraft सर्वर सेटअप">Minecraft Server Setup</div>
+    <div class="card" data-en="SMP Management" data-hi="SMP प्रबंधन">SMP Management</div>
+    <div class="card" data-en="Discord Development" data-hi="Discord डेवलपमेंट">Discord Development</div>
+    <div class="card" data-en="Java" data-hi="Java">Java</div>
+    <div class="card" data-en="Java Skript" data-hi="Java Skript">Java Skript</div>
+    <div class="card" data-en="Skript Maker" data-hi="Skript मेकर">Skript Maker</div>
   </div>
 </section>
 
 <section id="platforms">
-  <h2>My Platforms</h2>
+  <h2 data-en="My Platforms" data-hi="मेरे प्लेटफ़ॉर्म">My Platforms</h2>
   <p>
     <a href="https://discord.gg/4RrCaXR9C7" target="_blank" class="platform-btn">💬 Discord</a>
     <a href="https://youtube.com/@ninja_gamerz2692" target="_blank" class="platform-btn">▶️ YouTube</a>
@@ -173,11 +195,11 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
 </section>
 
 <section id="statsMain">
-  <h2>Achievements</h2>
+  <h2 data-en="Achievements" data-hi="उपलब्धियां">Achievements</h2>
   <div class="skills">
-    <div class="card"><span class="counter" data-target="5">0</span>+ Months Experience</div>
-    <div class="card"><span class="counter" data-target="100">0</span>+ Discord Members</div>
-    <div class="card"><span class="counter" data-target="5">0</span>+ Skripts Made</div>
+    <div class="card"><span class="counter" data-target="5">0</span>+ <span data-en="Months Experience" data-hi="महीनों का अनुभव">Months Experience</span></div>
+    <div class="card"><span class="counter" data-target="100">0</span>+ <span data-en="Discord Members" data-hi="Discord सदस्य">Discord Members</span></div>
+    <div class="card"><span class="counter" data-target="5">0</span>+ <span data-en="Skripts Made" data-hi="Skripts बनाए गए">Skripts Made</span></div>
   </div>
 </section>
 
@@ -185,8 +207,10 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
   <p>© 2025 𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉 | All Rights Reserved</p>
 </footer>
 
+<button class="lang-btn" id="langBtn">हिंदी</button>
+
 <script>
-// ===== Navbar Toggle =====
+// Navbar Toggle
 const navToggle = document.getElementById('navToggle');
 const dropdownMenu = document.getElementById('dropdownMenu');
 navToggle.addEventListener('click', ()=> {
@@ -205,55 +229,46 @@ dropdownMenu.querySelectorAll('a').forEach(a => {
   });
 });
 
-// ===== Section Reveal Animation =====
+// Section Reveal
 const sections = document.querySelectorAll("section");
 const observer = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if(entry.isIntersecting){
       entry.target.classList.add('show');
       const cards = entry.target.querySelectorAll('.card');
-      cards.forEach((card,i)=>{
-        card.style.transitionDelay = `${i*0.15}s`; // smooth stagger
-      });
+      cards.forEach((card,i)=>{card.style.transitionDelay = `${i*0.1}s`;});
     }
   });
 },{threshold:0.2});
 sections.forEach(section => observer.observe(section));
 
-// ===== Scroll Progress Bar =====
-const scrollProgress = document.getElementById('scrollProgress');
-window.addEventListener('scroll', () => {
-  const scrollTop = window.scrollY;
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const scrollPercent = (scrollTop / docHeight) * 100;
-  scrollProgress.style.width = scrollPercent + "%";
+// Counter Animation
+const counters = document.querySelectorAll('.counter');
+counters.forEach(counter=>{
+  const updateCount = ()=>{
+    const target = +counter.getAttribute('data-target');
+    const count = +counter.innerText;
+    const inc = target / 100;
+    if(count < target){
+      counter.innerText = Math.ceil(count + inc);
+      setTimeout(updateCount, 20);
+    } else {
+      counter.innerText = target;
+    }
+  };
+  updateCount();
 });
 
-// ===== Counter Animation =====
-const counters = document.querySelectorAll('.counter');
-const speed = 200;
-const animateCounters = (entries, observer) => {
-  entries.forEach(entry => {
-    if(entry.isIntersecting){
-      const counter = entry.target;
-      const updateCount = () => {
-        const target = +counter.getAttribute('data-target');
-        const count = +counter.innerText;
-        const increment = Math.ceil(target / speed);
-        if(count < target){
-          counter.innerText = count + increment;
-          setTimeout(updateCount, 30);
-        } else {
-          counter.innerText = target;
-        }
-      };
-      updateCount();
-      observer.unobserve(counter);
-    }
+// Language Toggle
+const langBtn = document.getElementById('langBtn');
+let lang = 'hi';
+langBtn.addEventListener('click', ()=>{
+  lang = lang==='hi'?'en':'hi';
+  document.querySelectorAll('[data-en]').forEach(el=>{
+    el.innerText = el.getAttribute(`data-${lang}`);
   });
-};
-const counterObserver = new IntersectionObserver(animateCounters, { threshold: 0.5 });
-counters.forEach(counter => counterObserver.observe(counter));
+  langBtn.innerText = lang==='hi'?'English':'हिंदी';
+});
 </script>
 </body>
 </html>
