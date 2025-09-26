@@ -5,6 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <title>𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉</title>
 <style>
+/* ===== Prevent text selection & blue highlight ===== */
+body, h1, h2, p, a, .card, .platform-btn, span {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+::selection {
+  background: transparent;
+}
+
+/* ===== Body & general ===== */
 body {
   margin:0;
   font-family:Arial,sans-serif;
@@ -112,7 +124,7 @@ h2 { font-size:1.8rem; margin-bottom:20px; color:#1E90FF; }
   box-shadow:0 20px 35px rgba(30,144,255,0.6);
 }
 
-/* Icon pop animation for counters */
+/* Counter animation */
 .counter-container {
   display:flex; flex-direction:column; align-items:center; justify-content:center;
 }
@@ -135,8 +147,6 @@ footer { padding:20px; background:rgba(17,17,17,0.85); text-align:center; backdr
 #hero p { font-size:1.2rem; color:#1E90FF; }
 
 #scrollProgress { position:fixed; top:0; left:0; width:0; height:4px; background:#1E90FF; z-index:50; transition: width 0.25s ease; }
-
-.counter { font-size:2rem; font-weight:bold; display:block; color:#1E90FF; margin-bottom:5px; }
 
 .lang-btn {
   position:fixed;
