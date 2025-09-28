@@ -1,0 +1,13 @@
+command /aloostick:
+    permission: aloo.stick
+    trigger:
+        give player stick named "&6&lAloo Stick" with lore "&eRight Click: &fShoot Garama Garam Aloo"
+        send action bar "&6Khilao sab ko ab aloo" to player
+
+on right click with stick:
+    if name of player's tool is "&6&lAloo Stick":
+        set {_loc} to target block of player
+        if {_loc} is set:
+            make player shoot fireball at speed 5
+            create explosion of force 10 at {_loc}
+            send action bar "&6Aloo khaalo Garam Garam" to player
