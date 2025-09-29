@@ -1,0 +1,213 @@
+# ================================
+# LOGIN SYSTEM - FULLY COMMENTED
+# ================================
+
+# -----------------------
+# CONFIG OPTIONS
+# -----------------------
+options:
+  min-password-length: 3      # Minimum password length for /register
+  max-password-length: 32     # Maximum password length for /register
+  max-login-tries: 3          # Max wrong password attempts before kick
+  session-timeout: 60         # Time (seconds) before auto kick if not logged in
+  title-refresh: 20           # Title refresh ticks (20 ticks = 1 sec)
+
+# -----------------------
+# PLAYER JOIN EVENT
+# -----------------------
+on join:
+    if {registered.%player%} is not set:
+        set {loggedin.%player%} to false
+        set {preloginloc.%player%} to location of player
+        send title "&b&lAUTH!" with subtitle "&7/register <password> <confirm-password>" to player for 15 seconds
+        wait {@session-timeout} seconds
+        if {loggedin.%player%} is false:
+            kick player due to "&4&l⚠ &4&lSession timed out! Please register to join."
+    else:
+        set {loggedin.%player%} to false
+        set {preloginloc.%player%} to location of player
+        send title "&b&lAUTH!" with subtitle "&7/login <password>" to player for 15 seconds
+        wait {@session-timeout} seconds
+        if {loggedin.%player%} is false:
+            kick player due to "&4⚠ &4&lSession timed out! Please login to join."
+
+# -----------------------
+# FREEZE MOVEMENT & CHAT
+# -----------------------
+on break:
+    if {loggedin.%player%} is false:
+        cancel event
+
+on place:
+    if {loggedin.%player%} is false:
+        cancel event
+
+on chat:
+    if {loggedin.%player%} is false:
+        cancel event
+        send "&4⚠ You must login first to chat!" to player 
+
+on quit:
+    if {loggedin.%player%} is true:
+        subtract 1 from {total_online}
+    delete {loggedin.%player%}
+    delete {logintries.%player%}
+
+# -----------------------
+# ACTIONBAR 
+# -----------------------
+every 2 seconds:
+    loop all players:
+        if {loggedin.%loop-player%} is false:
+            if {registered.%loop-player%} is not set:
+                send action bar "&a⚠ Please &a/register <password> <confirm-password> &eto continue!" to loop-player 
+            else: 
+                send action bar "&a⚠ Please &a/login <password> &eto continue!" to loop-player
+
+# -----------------------
+# REGISTER COMMAND
+# -----------------------
+command /register <text> <text>:
+    trigger:
+        if {registered.%player%} is set:
+            send title "&a&lAlready Registered!" with subtitle "&7&lYou are already registered" to player for 5 seconds
+            stop
+        if arg-1 is not arg-2:
+            send title "&4⚠ &4&lPasswords do not match!" with subtitle "&7&lTry again" to player for 5 seconds
+            stop
+        if length of arg-1 < {@min-password-length}:
+            send title "&e⚠ &e&lPassword too short!" with subtitle "&7&lMinimum {@min-password-length} characters" to player for 5 seconds
+            stop
+        if length of arg-1 > {@max-password-length}:
+            send title "&c⚠ &c&lPassword too long!" with subtitle "&7&lMaximum {@max-password-length} characters" to player for 5 seconds
+            stop
+        set {registered.%player%} to arg-1
+        add 1 to {total_registered}
+        set {loggedin.%player%} to true
+        delete {logintries.%player%}
+        # Save device info
+        set {_device} to "Unknown"
+        if {_version} contains "Bedrock":
+            set {_device} to "Mobile/Bedrock"
+        else if {_version} contains "Java":
+            set {_device} to "PC/Java"
+        set {player_version.%player%} to {_device} + " | " + {_version}
+        # Teleport back to pre-login location
+        if {preloginloc.%player%} is set:
+            teleport player to {preloginloc.%player%}
+            delete {preloginloc.%player%}
+        # Save login history
+        add "%player% | %{_device}% | %now%" to {login_history.%player%::*}
+        celebrate(player)
+        add 1 to {total_online}
+
+# -----------------------
+# LOGIN COMMAND
+# -----------------------
+command /login <text>:
+    trigger:
+        if {registered.%player%} is not set:
+            send title "&c⚠ &c&lNot Registered!" with subtitle "&7&lUse /register <password> <confirm-password>" to player for 8 seconds
+            stop
+        if {loggedin.%player%} is true:
+            send title "&a⚠ &a&lAlready Logged In!" with subtitle "&7&lYou are already logged in" to player for 5 seconds
+            stop
+        if {logintries.%player%} is not set:
+            set {logintries.%player%} to 0
+        if {logintries.%player%} >= {@max-login-tries}:
+            send title "&4&l⚠ TOO MANY ATTEMPTS!" with subtitle "&7You are being kicked for security" to player for 3 seconds
+            wait 2 seconds
+            kick player due to "&cYou have been kicked for too many failed login attempts!"
+            stop
+        # Correct password
+        if arg-1 is {registered.%player%}:
+            set {loggedin.%player%} to true
+            delete {logintries.%player%}
+            add "%player% | %{player_version.%player%}% | %now%" to {login_history.%player%::*}
+            add 1 to {total_online}
+            if {preloginloc.%player%} is set:
+                teleport player to {preloginloc.%player%}
+                delete {preloginloc.%player%}
+            celebrate(player)
+        # Wrong password
+        else:
+            add 1 to {logintries.%player%}
+            add 1 to {total_failed_attempts}
+            send title "&4⚠ &4&lWRONG PASSWORD!" with subtitle "&7Attempts: %{logintries.%player%}% / {@max-login-tries}" to player for 5 seconds
+            apply blindness to player for 3 second
+            apply slowness to player for 3 second
+
+# -----------------------
+# CELEBRATE FUNCTION (Visual Effects)
+# -----------------------
+function celebrate(p: player):
+    play sound "entity.player.levelup" to {_p}
+    strike lightning effect at location of {_p}
+    set {_colors::*} to "red" or "blue" or "green" or "yellow" or "aqua" or "purple" or "fuchsia" or "lime" or "orange" or "white"
+    set {_c} to random element out of {_colors::*}
+    set {_power} to random integer between 1 and 3
+
+# -----------------------
+# ADMIN COMMANDS
+# -----------------------
+command /loginreset <offline player>:
+    permission: loginsystem.admin
+    trigger:
+        delete {registered.%arg-1%}
+        delete {loggedin.%arg-1%}
+        delete {logintries.%arg-1%}
+        send "&a&l[✔] Password reset for &e%arg-1%&a. They must /register again." to player
+
+command /logininfo <offline player>:
+    permission: loginsystem.admin
+    trigger:
+        if {registered.%arg-1%} is set:
+            send "&e%arg-1% is &a&lREGISTERED" to player
+            if {loggedin.%arg-1%} is true:
+                send "&a&l[✔] Currently logged in" to player
+            else:
+                send "&c&l[✘] Not logged in" to player
+            if {player_version.%arg-1%} is set:
+                send "&6&lDevice/Version: &f%{player_version.%arg-1%}%" to player
+        else:
+            send "&c%arg-1% is &4&lNOT REGISTERED!" to player
+
+command /forcekick <offline player>:
+    permission: loginsystem.admin
+    trigger:
+        kick0 arg-1 due to "&4&lKicked by admin from login system!"
+        send "&4%arg-1% has been kicked." to player
+
+command /forcerelog <player>:
+    permission: loginsystem.admin
+    trigger:
+        set {loggedin.%arg-1%} to false
+        teleport arg-1 to spawn point
+        send "&a⚠ &a&lYou have been forcefully logged out by an admin!" to arg-1
+        send "&c&l[✔] %arg-1% has been logged out." to player
+
+command /loginreload:
+    permission: loginsystem.admin
+    trigger:
+        send "&a&l[✔] Login system reloaded!" to player
+
+# -----------------------
+# LOGIN STATS COMMAND
+# -----------------------
+command /loginstats:
+    permission: loginsystem.admin
+    trigger:
+        send "&e⚡ Login System Stats ⚡" to player
+        send "&aTotal Registered Players: &f%{total_registered}%" to player
+        send "&aCurrently Online & Logged-in Players: &f%{total_online}%" to player
+        send "&cTotal Failed Login Attempts: &f%{total_failed_attempts}%" to player
+        send "&6Top 5 Failed Login Attempts (with Device/Version):" to player
+        set {_count} to 0
+        loop {_top::*}:
+            add 1 to {_count}
+            set {_device} to "Unknown"
+            if {player_version.%loop-value%} is set:
+                set {_device} to {player_version.%loop-value%}
+            send "&c%loop-value% &7- %{logintries.%loop-value%}% failed attempts &6(%{_device}%)" to player
+            if {_count} >= 5:
+                stop
