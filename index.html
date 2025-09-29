@@ -59,7 +59,6 @@ h2{font-size:2rem;color:#a3c9f1;margin-bottom:20px;text-shadow:0 0 5px #a3c9f1;}
 .download-card a:hover{box-shadow:0 0 10px #9b59b6;}
 .download-count{font-size:0.95rem;color:#a3c9f1;padding:6px 12px;border-radius:999px;background:rgba(163,201,241,0.04);box-shadow:inset 0 0 6px rgba(0,0,0,0.25);}
 
-.visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap;}
 footer{padding:25px;text-align:center;background:rgba(15,15,20,0.85);backdrop-filter:blur(5px);color:#a3c9f1;text-shadow:0 0 3px #a3c9f1;}
 
 #scrollProgress{position:fixed;top:0;left:0;width:0;height:4px;background:#9b59b6;z-index:200;transition:width 0.25s ease;}
@@ -176,12 +175,14 @@ section{padding:50px 3%;}
 
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
+// Particles
 particlesJS("particles-js", {
   "particles": {"number":{"value":60,"density":{"enable":true,"value_area":800}},"color":{"value":"#a3c9f1"},"shape":{"type":"circle"},"opacity":{"value":0.2,"random":true},"size":{"value":3,"random":true},"line_linked":{"enable":true,"distance":150,"color":"#a3c9f1","opacity":0.1,"width":1},"move":{"enable":true,"speed":1,"direction":"none","random":true,"straight":false,"out_mode":"out","bounce":false}},
   "interactivity":{"detect_on":"canvas","events":{"onhover":{"enable":true,"mode":"repulse"}}},
   "retina_detect":true
 });
 
+// Nav
 const navToggle=document.getElementById('navToggle');
 const dropdownMenu=document.getElementById('dropdownMenu');
 const clickSound=document.getElementById('clickSound');
@@ -203,6 +204,7 @@ dropdownMenu.querySelectorAll('a').forEach(a=>{
   });
 });
 
+// Sections animation
 const sections=document.querySelectorAll("section");
 const observer=new IntersectionObserver(entries=>{
   entries.forEach(entry=>{
@@ -215,6 +217,7 @@ const observer=new IntersectionObserver(entries=>{
 },{threshold:0.2});
 sections.forEach(section=>observer.observe(section));
 
+// Achievements counters
 const counters=document.querySelectorAll('.counter');
 counters.forEach(counter=>{
   const updateCount=()=>{
@@ -227,19 +230,19 @@ counters.forEach(counter=>{
   updateCount();
 });
 
+// Scroll progress
 window.addEventListener('scroll',()=>{
   const winScroll=document.body.scrollTop||document.documentElement.scrollTop;
   const height=document.documentElement.scrollHeight-document.documentElement.clientHeight;
   document.getElementById('scrollProgress').style.width = ((winScroll/height)*100)+'%';
 });
 
-/* Download counters logic */
-function safeKey(key){ return 'ngz_download_' + key; }
+// Download counters
 function initDownloadCards(){
   const cards = document.querySelectorAll('.download-card');
   cards.forEach(card=>{
     const key = card.getAttribute('data-key') || card.querySelector('.download-btn')?.getAttribute('href') || ('card-' + Math.random().toString(36).slice(2,8));
-    const storageKey = safeKey(key);
+    const storageKey = 'ngz_download_' + key;
     const display = card.querySelector('.download-count');
     const firstBtn = card.querySelector('.download-btn');
     const initial = firstBtn ? parseInt(firstBtn.getAttribute('data-initial')||'0',10) : 0;
@@ -250,34 +253,39 @@ function initDownloadCards(){
     const btns = card.querySelectorAll('.download-btn');
     btns.forEach(btn=>{
       btn.addEventListener('click', function(e){
-        e.preventDefault();
-        stored = (isNaN(stored)?0:stored) + 1;
-        localStorage.setItem(storageKey, stored);
-        updateDisplay(display, stored);
         const href = btn.getAttribute('href');
         const target = btn.getAttribute('target') || '_self';
-        try {
-          if (btn.hasAttribute('download')) {
+        if(btn.hasAttribute('download')){
+          // Actual download: increment after short delay
+          setTimeout(()=>{
+            stored = (isNaN(stored)?0:stored) + 1;
+            localStorage.setItem(storageKey, stored);
+            updateDisplay(display, stored);
             const a = document.createElement('a');
             a.href = href;
-            a.setAttribute('download', '');
+            a.setAttribute('download','');
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-          } else {
-            window.open(href, target, 'noopener');
-          }
-        } catch (err) { window.location.href = href; }
+          }, 500);
+        } else {
+          // External link: increment immediately
+          stored = (isNaN(stored)?0:stored) + 1;
+          localStorage.setItem(storageKey, stored);
+          updateDisplay(display, stored);
+          window.open(href, target, 'noopener');
+        }
       });
     });
   });
 }
+
 function updateDisplay(displayEl, value){
   if(!displayEl) return;
   displayEl.textContent = (value === 1) ? '1 Download' : value + ' Downloads';
 }
+
 document.addEventListener('DOMContentLoaded', initDownloadCards);
 </script>
-
 </body>
-</html>
+  </html>
