@@ -35,8 +35,23 @@ h2{font-size:2rem;color:#a3c9f1;margin-bottom:20px;text-shadow:0 0 5px #a3c9f1;}
 
 .skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px;margin-top:30px;justify-items:center;}
 .card{width:100%;max-width:250px;min-height:120px;background:rgba(25,25,40,0.85);padding:25px;border-radius:15px;transition:0.5s;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 0 5px rgba(163,201,241,0.3);display:flex;align-items:center;justify-content:center;text-align:center;font-size:1.1rem;}
-.card::after{content:"";position:absolute;width:100%;height:100%;top:0;left:-100%;background:rgba(163,201,241,0.05);transform:skewX(-20deg);transition:all 0.7s ease;}
-.card:hover::after{left:100%;}
+
+/* Premium Shine Effect */
+.card::after{
+  content:"";
+  position:absolute;
+  top:0; left:-75%;
+  width:50%; height:100%;
+  background:linear-gradient(120deg,transparent,rgba(163,201,241,0.6),transparent);
+  transform:skewX(-25deg);
+  filter:blur(2px);
+  transition:all 0.7s ease;
+}
+.card:hover::after{
+  left:125%;
+  transition:all 1s ease;
+}
+
 .card:hover{transform:translateY(-8px) scale(1.03);box-shadow:0 0 20px rgba(163,201,241,0.5);}
 .card:active{background:rgba(25,25,40,0.85);}
 
@@ -63,6 +78,15 @@ footer{padding:25px;text-align:center;background:rgba(15,15,20,0.85);backdrop-fi
 #particles-js{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
 canvas{display:block;}
 
+/* Disable selection on click */
+.card, .download-card, .platform-btn {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
 @media(max-width:600px){
 header h1{font-size:1.2rem;}
 section{padding:50px 3%;}
@@ -74,7 +98,7 @@ section{padding:50px 3%;}
 </head>
 <body>
 
-<audio id="clickSound" src="https://freesound.org/data/previews/170/170186_2437358-lq.mp3"></audio>
+<audio id="clickSound" preload="auto" src="https://freesound.org/data/previews/170/170186_2437358-lq.mp3"></audio>
 
 <div id="particles-js"></div>
 <div id="scrollProgress"></div>
@@ -162,7 +186,7 @@ section{padding:50px 3%;}
 </section>
 
 <footer>
-<p>© 2025 𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉 | All Rights Reserved</p>
+<p>© <span id="year"></span> 𝙽𝙸𝙽𝙹𝙰𝙶𝙰𝙼𝙴𝚁𝚉 | All Rights Reserved</p>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -225,6 +249,15 @@ const winScroll=document.body.scrollTop||document.documentElement.scrollTop;
 const height=document.documentElement.scrollHeight-document.documentElement.clientHeight;
 document.getElementById('scrollProgress').style.width=((winScroll/height)*100)+'%';
 });
+
+// Disable text selection on click
+document.querySelectorAll('.card, .download-card, .platform-btn')
+.forEach(el => {
+  el.addEventListener('mousedown', e => e.preventDefault());
+});
+
+// Auto year update
+document.getElementById("year").textContent = new Date().getFullYear();
 </script>
 
 </body>
